@@ -32,10 +32,10 @@ function [timeVector, stepVector] = generateStepFunction(dT, bslDuration, stimDu
 %       (up).
 %__________________________________________________________________________
 
-stepVector = zeroes(1, ceil(totalDuration/dT));
+stepVector = zeros(1, ceil(totalDuration/dT));
 timeVector = dT:dT:dT*length(stepVector);
 
-stepVector(ceil(bslDuration/dT):ceil((bslDuration+stimDuration)/dT)) = ...
+stepVector(ceil(bslDuration/dT):ceil((bslDuration+stimDuration)/dT)-1) = ...
     ones(1, ceil(stimDuration/dT));
 
 end
