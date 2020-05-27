@@ -1,65 +1,53 @@
-function [resultStruct] = findTF(fileFrom, pathFrom, fileTo, pathTo, options)
+function [resultStruct] = findTF(From, To, options)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
-clear CaStart RBCStart
-for i=1:length(pathFrom)
-    quack= getTimeFromPath(fileFrom, pathFrom{i});
-    maxTime= quack(end); %disp(['Max time: ', num2str(maxTime)]);
-    minTime= quack(1); %disp(['Min time: ', num2str(minTime)]);
-    [FromStart(:, 1, i), FromStart(:, 2, i)] = cutSignal(getTimeFromPath(fileFrom, pathFrom{i}), h5read(fileFrom, pathFrom{i}), options.range);
-    [ToStart(:, 1, i), ToStart(:, 2, i)] = cutSignal(getTimeFromPath(fileTo, pathTo{i}),  h5read(fileTo, pathTo{i}), options.range);
-end
+[FromTreated(:, 1), FromTreated(:, 2)] = cutSignal(From(:, 1), From(:, 2), options.range);
+[ToTreated(:, 1), ToTreated(:, 2)] = cutSignal(To(:, 1), To(:, 2), options.range);
 
-%% First interpolation to 'smooth' calcium
-% This should not be done if the From is a step
 if ~ options.stepON
-    timeVector = options.range(1):options.smoothDT:options.range(2);    
-    for i=1:size(FromStart, 3)
-        From_int(:, 1, i) = timeVector;
-        From_int(:, 2, i) = interp1(FromStart(:, 1, i), FromStart(:, 2, i), timeVector, 'spline');
+    timeVector = options.range(1):options.smoothDT:options.range(2);
+    From_int(:, 1) = timeVector;
+    From_int(:, 2) = interp1(FromTreated(:, 1), FromTreated(:, 2), timeVector, 'spline');
+    FromTreated = From_int;
+    
+    if options.medianFilter_From > 0
+        FromTreated(:, 2) = medfilt1(FromTreated(:, 2), options.medianFilter_From);
     end
+    if options.sgolayPoints_From > 0
+        FromTreated(:, 2) = sgolayfilt(FromTreated(:, 2), 3, options.sgolayPoints_From);
+    end    
 else
-    timeVector = FromStart(:, 1, i);
-    From_int = FromStart;
+    timeVector = FromTreated(:, 1);
 end
 
 %%
-To_int = ToStart;
-for i=1:size(ToStart, 3)
-    if options.applyMedianToRBC
-        To_int(:, 2, i) = medfilt1(To_int(:, 2, i), options.medianFilterN);
-    end
-    if options.applySGolayRBC
-        To_int(:, 2, i) = sgolayfilt(To_int(:, 2, i), 3, options.sgolayPoints_To);
-    end
+if options.medianFilter_To > 0
+    ToTreated(:, 2) = medfilt1(ToTreated(:, 2), options.medianFilter_To);
 end
+if options.sgolayPoints_To > 0
+    ToTreated(:, 2) = sgolayfilt(ToTreated(:, 2), 3, options.sgolayPoints_To);
+end
+
 
 %% RSS1 optimization
-[tf, param, opt, finalSSResid, exitFlag, hessian] = OptHRF(FromStart, From_int, ToStart, To_int, options);
+[tf, param, opt, finalSSResid, exitFlag, hessian] = OptHRF(FromTreated, ToTreated, options);
 
-
-for i=1:length(pathFrom)
-    result(:, i) = conv(squeeze(From_int(:, 2, i)), tf);
-    int_res = interp1(timeVector(1:end), squeeze(result(1:length(timeVector), i)), squeeze(ToStart(1:end, 1, i)), 'linear');
-    R2(i)= getR2(squeeze(ToStart(1:end-1, 2, i)), int_res(1:end-1));
-end
+pred = conv(FromTreated(:, 2), tf);
+pred = interp1(FromTreated(:, 1), pred(1:length(FromTreated(:, 2))), ToTreated(:,1), 'linear');
+R = corrcoef(ToTreated(1:end-1,2), pred(1:end-1));
 
 %%
 clear resultStruct;
 resultStruct.genOptions = opt;
 resultStruct.finalSSResid = finalSSResid;
-resultStruct.R2 = R2;
+resultStruct.pearson = R(1, 2);
 resultStruct.paramTF = param;
 resultStruct.TF = tf;
-resultStruct.fileFrom = fileFrom;
-resultStruct.fileTo = fileTo;
-resultStruct.pathFrom = pathFrom;
-resultStruct.pathTo = pathTo;
-resultStruct.fromDataRaw = FromStart;
-resultStruct.fromDataTreated = From_int;
-resultStruct.toDataRaw = ToStart;
-resultStruct.toDataTreated = To_int;
+resultStruct.fromDataRaw = From;
+resultStruct.fromDataTreated = FromTreated;
+resultStruct.toDataRaw = To;
+resultStruct.toDataTreated = ToTreated;
 %resultStruct.fig = fig;
 resultStruct.exitFlag = exitFlag;
 resultStruct.hessian = hessian;

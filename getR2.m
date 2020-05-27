@@ -5,8 +5,7 @@
 % Yfit : 1D scalar vector, fitted data
 
 function rsq = getR2(Y, Yfit)
-    yresid = Y - Yfit;
-    ssresid = sum(yresid.^2);
-    sstotal = (length(Y-1)) * var(Y);
+    ssresid = sum((Y - Yfit).^2);
+    sstotal = (length(Y)-1) * var(Y);
     rsq = 1 - ssresid/sstotal;
 end

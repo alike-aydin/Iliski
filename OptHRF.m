@@ -1,4 +1,4 @@
-function [f, p, opt, finalSSResid, exitFlag, hessian] = OptHRF(FromOrig, From, ToOrig, To, options)
+function [f, p, opt, finalSSResid, exitFlag, hessian] = OptHRF(From, To, options)
 %
 %
 %
@@ -95,7 +95,7 @@ end
 
 
 
-anonFunction = @(param)ssresidEval(param, FromOrig, From, ToOrig, To, options);
+anonFunction = @(param)ssresidEval(param, From, To, options);
 
 if strcmp(options.algo, 'fminsearch')
     [Variables, finalSSResid, exitFlag] = fminsearch(anonFunction, p, options.optAlgo);
@@ -110,12 +110,12 @@ elseif strcmp(options.algo, 'fmincon')
 elseif strcmp(options.algo, 'toeplitz')
     p = 'toeplitz';
     f = calculateTF(From(:, 2)', To(:, 2)', 'toeplitz');
-    finalSSResid = 1; %ssresidEval(p, FromOrig(:, 2)', From(:, 2)', To(:, 2)', options);
+    finalSSResid = 1; 
     exitFlag = 0; hessian = NaN;
 elseif strcmp(options.algo, 'fourier')
     p = 'fourier';
     f = calculateTF(From(:, 2)', To(:, 2)', 'fourier');
-    finalSSResid = 1; %ssresidEval(p, FromOrig(:, 2)', From(:, 2)', To(:, 2)', options);
+    finalSSResid = 1;
     exitFlag = 0; hessian = NaN;
 end
 

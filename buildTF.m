@@ -1,4 +1,4 @@
-function results = buildTF(FileFrom, PathFrom, FileTo, PathTo, options, savingName, savingFile)
+function results = buildTF(From, To, options, savingName, savingFile)
 
 Modality = 'ET_250mV_5sec';
 Tech = 'Ca_fUS_HP';
@@ -55,14 +55,14 @@ for i= 1:options.Nrun
         options.algo = 'simulannealbnd';
         options.optAlgo = optionsAnneal;
         
-        resultStruct = findTF(FileFrom, PathFrom, FileTo, PathTo, options);
+        resultStruct = findTF(From, To, options);
         
         options.paramsTF = resultStruct.paramTF;
         options.paramsTF_FirstStep = resultStruct.paramTF;
         
         options.algo = 'fminunc';
         options.optAlgo = optionsNunc;
-        resultStruct = findTF(FileFrom, PathFrom, FileTo, PathTo, options);
+        resultStruct = findTF(From, To, options);
         
         % has the second algorithm changed anything?
         optParamDiff = resultStruct.paramTF - options.paramsTF_FirstStep;
@@ -78,7 +78,7 @@ for i= 1:options.Nrun
             options.optAlgo = optionsMinSearch;
         end
         
-        resultStruct = findTF(FileFrom, PathFrom, FileTo, PathTo, options);
+        resultStruct = findTF(From, To, options);
     end
     results{i} = resultStruct;
 

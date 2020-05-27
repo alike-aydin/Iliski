@@ -1,4 +1,4 @@
-function SSResid = ssresidEval(param, FromOrig, From, ToOrig, To, options)
+function SSResid = ssresidEval(param, From, To, options)
 % Computes a transfer function and return the residual sum of the squares
 % when using this TF on From to get To.
 %
@@ -23,19 +23,12 @@ else
     [f, ~] = computehrf(options.smoothDT, options.durationTF, param);
 end
 
-SSPredic = 0;
-SSSmooth = 0;
 
-for i=1:size(From, 3) 
-    convolution = conv(From(:, 2, i), f); 
-    convolution = interp1(From(:, 1, i), convolution(1:length(From(:, 2, i))), To(:, 1, i), options.interpMethod);
-    SSPredic = SSPredic + sum((To(1:end-1, 2, i) - convolution(1:end-1)).^2);
-    
-    TMP = interp1(From(:, 1, i), From(:, 2, i)  , FromOrig(:, 1), 'linear');
-    %SSSmooth = SSSmooth + sum((FromOrig(1:end-1, 2) - TMP(1:end-1)).^2);
-end
+convolution = conv(From(:, 2), f); 
+convolution = interp1(From(:, 1), convolution(1:length(From(:, 2))), To(:, 1), options.interpMethod);
+SSPredic = sum((To(1:end-1, 2) - convolution(1:end-1)).^2);
 
-SSResid = SSPredic + SSSmooth;
+SSResid = SSPredic;
 
 if (isfield(options, 'ruleOutImag') && options.ruleOutImag) && imag(SSResid) ~= 0
     SSResid = Inf;
