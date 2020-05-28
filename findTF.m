@@ -5,7 +5,7 @@ function [resultStruct] = findTF(From, To, options)
 [FromTreated(:, 1), FromTreated(:, 2)] = cutSignal(From(:, 1), From(:, 2), options.range);
 [ToTreated(:, 1), ToTreated(:, 2)] = cutSignal(To(:, 1), To(:, 2), options.range);
 
-if ~ options.stepON
+if ~options.stepON
     timeVector = options.range(1):options.smoothDT:options.range(2);
     From_int(:, 1) = timeVector;
     From_int(:, 2) = interp1(FromTreated(:, 1), FromTreated(:, 2), timeVector, 'spline');
