@@ -1,0 +1,2 @@
+1-Gamma: @(p1, p2, p3, p4, t)heaviside(t-p3).*p4.*(t-p3).^(p1-1).*(p2^p1).*exp(-p2.*(t-p3))./(gamma(p1))
+2-Logit: @(p1, p2, p3, p4, p5, p6, t)p5*(1./(1+exp(-((t-p1)/p3)))) - p6*(1./(1+exp(-((t-p2)/p4))))
