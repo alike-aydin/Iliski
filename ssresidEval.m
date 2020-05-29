@@ -13,16 +13,9 @@ function SSResid = ssresidEval(param, From, To, options)
 %   the convolution between From & TF
 %   options.ruleOutImag = true/false  Remainer from Davis and I's tests.
 
-if strcmp(options.func, 'gamma')
-    [f, ~] = computehrf(options.smoothDT, options.durationTF, param);
-elseif strcmp(options.func, 'logit')
-    [f, ~] = computeLogit(options.smoothDT, options.durationTF, param);
-elseif strcmp(options.func, 'toeplitz')
-    f = calculateTF(From, To, 'toeplitz');
-else
-    [f, ~] = computehrf(options.smoothDT, options.durationTF, param);
-end
-
+time = [0:options.smoothDT:options.durationTF];
+cellParams = num2cell(param);
+f = options.func(cellParams{:}, time);
 
 convolution = conv(From(:, 2), f); 
 convolution = interp1(From(:, 1), convolution(1:length(From(:, 2))), To(:, 1), options.interpMethod);
@@ -34,5 +27,5 @@ if (isfield(options, 'ruleOutImag') && options.ruleOutImag) && imag(SSResid) ~= 
     SSResid = Inf;
     disp(['Complex SSRBC : ' num2str(SSResid) ' params :' param]);
 end
-%disp(SSResid);
+
 end
