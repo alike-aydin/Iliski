@@ -20,8 +20,6 @@ function TF = calculateTF(From, To, method, smoothing, timeVect)
 
         TF = Toeplitz\[To]';
     elseif strcmp(method, 'fourier')
-        size(From)
-        size(To)
         Fourier = fft(To)./ fft(From);
         TF = ifft(Fourier);
     elseif strcmp(method, '2gamma')
