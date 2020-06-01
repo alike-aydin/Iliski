@@ -7,16 +7,17 @@ function [resultStruct] = findTF(From, To, options)
 
 if ~options.stepON
     timeVector = options.range(1):options.smoothDT:options.range(2);
-    From_int(:, 1) = timeVector;
-    From_int(:, 2) = interp1(FromTreated(:, 1), FromTreated(:, 2), timeVector, 'spline');
-    FromTreated = From_int;
-    
+       
     if options.medianFilter_From > 0
         FromTreated(:, 2) = medfilt1(FromTreated(:, 2), options.medianFilter_From);
     end
     if options.sgolayPoints_From > 0
         FromTreated(:, 2) = sgolayfilt(FromTreated(:, 2), 3, options.sgolayPoints_From);
-    end    
+    end
+    
+    From_int(:, 1) = timeVector;
+    From_int(:, 2) = interp1(FromTreated(:, 1), FromTreated(:, 2), timeVector, 'spline');
+    FromTreated = From_int;
 else
     timeVector = FromTreated(:, 1);
 end
