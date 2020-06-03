@@ -5,8 +5,6 @@
 % Methods : 'toeplitz', 'fourier', '2gamma', '1gamma', '2logit, 
 
 function TF = calculateTF(From, To, method, smoothing, timeVect)
-% size(From)
-% size(To)
     if strcmp(method,'toeplitz')
         N = length(From);
         Toeplitz = toeplitz([From zeros(1, N-1)], [From(1) zeros(1, N-1)]);

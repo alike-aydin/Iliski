@@ -30,6 +30,12 @@ if options.sgolayPoints_To > 0
     ToTreated(:, 2) = sgolayfilt(ToTreated(:, 2), 3, options.sgolayPoints_To);
 end
 
+% If the TF is deconvolutional, TO should have the same dT as From
+if find(strcmp(options.algo, {'fourier'; 'toeplitz'}), 1)
+    To_int(:, 1) = timeVector;
+    To_int(:, 2) = interp1(ToTreated(:, 1), ToTreated(:, 2), timeVector, 'spline');
+    ToTreated = To_int;
+end
 
 %% RSS1 optimization
 [tf, param, opt, finalSSResid, exitFlag, hessian] = OptHRF(FromTreated, ToTreated, options);
