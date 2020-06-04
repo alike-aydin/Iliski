@@ -45,19 +45,37 @@ pred = interp1(FromTreated(:, 1), pred(1:length(FromTreated(:, 2))), ToTreated(:
 R = corrcoef(ToTreated(1:end-1,2), pred(1:end-1));
 
 %%
-clear resultStruct;
-resultStruct.genOptions = opt;
-resultStruct.finalSSResid = finalSSResid;
-resultStruct.pearson = R(1, 2);
-resultStruct.paramTF = param;
-resultStruct.TF = tf;
-resultStruct.fromDataRaw = From;
-resultStruct.fromDataTreated = FromTreated;
-resultStruct.toDataRaw = To;
-resultStruct.toDataTreated = ToTreated;
-%resultStruct.fig = fig;
-resultStruct.exitFlag = exitFlag;
-resultStruct.hessian = hessian;
-resultStruct.date = datetime;
+resultStruct = struct();
+% resultStruct.genOptions = opt;
+% resultStruct.finalSSResid = finalSSResid;
+% resultStruct.pearson = R(1, 2);
+% resultStruct.paramTF = param;
+% resultStruct.TF = tf;
+% resultStruct.fromDataRaw = From;
+% resultStruct.fromDataTreated = FromTreated;
+% resultStruct.toDataRaw = To;
+% resultStruct.toDataTreated = ToTreated;
+% %resultStruct.fig = fig;
+% resultStruct.exitFlag = exitFlag;
+% resultStruct.hessian = hessian;
+% resultStruct.date = datetime;
+
+resultStruct.Header = opt;
+
+resultStruct.InputData = struct();
+resultStruct.InputData.From = From;
+resultStruct.InputData.To = To;
+
+resultStruct.Computed = struct();
+resultStruct.Computed.FromTreated = FromTreated;
+resultStruct.Computed.ToTreated = ToTreated;
+resultStruct.Computed.Date = datetime;
+resultStruct.Computed.TF = [[0:options.smoothDT:options.durationTF]' tf'];
+resultStruct.Computed.Prediction = [FromTreated(:, 1) pred(1:length(FromTreated(:, 2)))];
+resultStruct.Computed.Parameters = param;
+resultStruct.Computed.Hessian = hessian;
+resultStruct.Computed.ExitFlag = exitFlag;
+resultStruct.Computed.Pearson = R(1, 2);
+resultStruct.Computed.ResidualSumSquare = finalSSResid;
 end
 

@@ -49,8 +49,8 @@ optionsCon = optimset('Display', 'off', ...
 
 %% TF computing
 clear matVar results resultStruct
-results = cell(options.Nrun, 1);
-for i= 1:options.Nrun
+
+for i = 1:options.Nrun
     if options.twiceOpt
         options.algo = 'simulannealbnd';
         options.optAlgo = optionsAnneal;
@@ -65,7 +65,7 @@ for i= 1:options.Nrun
         resultStruct = findTF(From, To, options);
         
         % has the second algorithm changed anything?
-        optParamDiff = resultStruct.paramTF - options.paramsTF_FirstStep;
+        optParamDiff = resultStruct.Computed.Parameters - options.paramsTF_FirstStep;
         % disp(['Param Diff: ', num2str(optParamDiff)])
     else
         if strcmp(options.algo, 'simulannealbnd')
@@ -80,80 +80,73 @@ for i= 1:options.Nrun
         
         resultStruct = findTF(From, To, options);
     end
-    results{i} = resultStruct;
+    
+    if options.Nrun > 1 && i == 1
+        results = resultStruct;
+        results.Computed.Parameters = [];
+        results.Computed.Parameters(:, i) = resultStruct.Computed.Parameters';
+        results.Computed.Hessian = [];
+        results.Computed.Hessian(:, i) = resultStruct.Computed.Hessian;
+    elseif options.Nrun > 1
+        results.Computed.TF(:, :, i) = resultStruct.Computed.TF;
+        results.Computed.Prediction(:, :, i) = resultStruct.Computed.Prediction;
+        results.Computed.Parameters(:, i) = resultStruct.Computed.Parameters';
+        results.Computed.Hessian(:, i) = resultStruct.Computed.Hessian;
+        results.Computed.ExitFlag(i) = resultStruct.Computed.ExitFlag;
+        results.Computed.Pearson(i) = resultStruct.Computed.Pearson;
+        results.Computed.ResidualSumSquare(i) = resultStruct.Computed.ResidualSumSquare;
+    else
+        results = resultStruct;
+    end
+    
 
     % Saving out results
-    if options.saveOut
-        %if input('Save ?') == 1
-        try
-            matVar = load(MatFile); % it looks for the output structure file
-        catch
-            matVar.results = struct(); % if not found, it makes a new one
-        end
-        if twiceOpt
-            try
-                matVar.results.(Modality).(Tech).(Mouse).(['DT' num2str(options.smoothDT*1000)]).(options.func).('simulannealbnd_fminunc') = ...
-                    [matVar.results.(Modality).(Tech).(Mouse).(['DT' num2str(options.smoothDT*1000)]).(options.func).('simulannealbnd_fminunc') ...
-                    resultStruct];
-            catch ME
-                if strcmp(ME.identifier, 'MATLAB:nonExistentField')
-                    matVar.results.(Modality).(Tech).(Mouse).(['DT' num2str(options.smoothDT*1000)]).(options.func).('simulannealbnd_fminunc') = ...
-                        resultStruct;
-                else
-                    rethrow(ME);
-                end
-            end
-        else
-            try
-                matVar.results.(Modality).(Tech).(Mouse).(['DT' num2str(options.smoothDT*1000)]).(options.func).(options.algo) = ...
-                    [matVar.results.(Modality).(Tech).(Mouse).(['DT' num2str(options.smoothDT*1000)]).(options.func).(options.algo) ...
-                    resultStruct];
-            catch ME
-                if strcmp(ME.identifier, 'MATLAB:nonExistentField')
-                    matVar.results.(Modality).(Tech).(Mouse).(['DT' num2str(options.smoothDT*1000)]).(options.func).(options.algo) = ...
-                        resultStruct;
-                else
-                    rethrow(ME);
-                end
-            end
-        end
-        results = matVar.results;
-        save(MatFile, 'results');
-        %end
-        if options.Nrun>1
-            close all
-        end
-    end
+%     if options.saveOut
+%         %if input('Save ?') == 1
+%         try
+%             matVar = load(MatFile); % it looks for the output structure file
+%         catch
+%             matVar.results = struct(); % if not found, it makes a new one
+%         end
+%         if twiceOpt
+%             try
+%                 matVar.results.(Modality).(Tech).(Mouse).(['DT' num2str(options.smoothDT*1000)]).(options.func).('simulannealbnd_fminunc') = ...
+%                     [matVar.results.(Modality).(Tech).(Mouse).(['DT' num2str(options.smoothDT*1000)]).(options.func).('simulannealbnd_fminunc') ...
+%                     resultStruct];
+%             catch ME
+%                 if strcmp(ME.identifier, 'MATLAB:nonExistentField')
+%                     matVar.results.(Modality).(Tech).(Mouse).(['DT' num2str(options.smoothDT*1000)]).(options.func).('simulannealbnd_fminunc') = ...
+%                         resultStruct;
+%                 else
+%                     rethrow(ME);
+%                 end
+%             end
+%         else
+%             try
+%                 matVar.results.(Modality).(Tech).(Mouse).(['DT' num2str(options.smoothDT*1000)]).(options.func).(options.algo) = ...
+%                     [matVar.results.(Modality).(Tech).(Mouse).(['DT' num2str(options.smoothDT*1000)]).(options.func).(options.algo) ...
+%                     resultStruct];
+%             catch ME
+%                 if strcmp(ME.identifier, 'MATLAB:nonExistentField')
+%                     matVar.results.(Modality).(Tech).(Mouse).(['DT' num2str(options.smoothDT*1000)]).(options.func).(options.algo) = ...
+%                         resultStruct;
+%                 else
+%                     rethrow(ME);
+%                 end
+%             end
+%         end
+%         results = matVar.results;
+%         save(MatFile, 'results');
+%         %end
+%         if options.Nrun>1
+%             close all
+%         end
+%     end
 end
 
-if options.Nrun>1
-    load handel
-    sound(y,Fs)
+% if options.Nrun>1
+%     load handel
+%     sound(y,Fs)
+% end
 end
-end
-
-%% Testing TFs
-
-% %useTF(fileFrom, pathFrom, fileTo, pathTo, options);
-% clear options
-% options.medianFilterN = 5;
-% options.applyMedianToRBC = false;
-% options.sgolayPoints_To = 299;
-% options.applySGolayRBC = true;
-% options.interpMethod = 'spline'; %'spline'/'pchip'
-% options.ruleOutImag = false;
-% options.smoothDT = 0.04;
-% options.range = [5, 27];
-% options.durationTF = 15;
-% options.func = 'gamma'; % 'gamma'/'logit'
-% options.AmpliOptON= true;
-% options.paramsTF = [1, 0.3, 1.00E-03, 0.04];
-% options.AmpliOptRange= [12, 18]; % for our TF [12, 18], for HRF [12, 30], although it does not change anything in the P coeff
-% options.title= {'Interpolated Calcium signal','Optimized TF vs classic HRF',...
-%     'Interpolated RBC signal', 'Optimized (Best) Prediction (optimized amplit.)'};
-%
-% %PATH_CA = {'/DeltaOverBSL/RBC/ET_250mV_5sec/avg'};
-%
-% useTF('steps_samp40ms.h5', {'/5sec'}, 'VT43_Dom.h5', {'/DeltaOverBSL/FUS/HighSpeed/SV/ET_250mV_5sec/ROI2/avg'}, options);
-
 
