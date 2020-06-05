@@ -24,7 +24,7 @@ function [sortedResults] = sortTFComputations(results, direction)
 %__________________________________________________________________________
 
 % If there is more than a single run
-if results.Header.Nrun > 1
+if results.Header.Iterations > 1
     [~, sortedIdx] = sort(results.Computed.ResidualSumSquare, direction);
     
     sortedResults = results;

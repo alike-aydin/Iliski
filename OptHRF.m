@@ -3,7 +3,7 @@ function [f, p, opt, finalSSResid, exitFlag, hessian] = OptHRF(From, To, options
 %
 %
 % options (struct)
-%   options.algo : 'fminsearch'/'fminunc'/'simulannealbnd'/'fmincon' algorithm to use
+%   options.Algorithm : 'fminsearch'/'fminunc'/'simulannealbnd'/'fmincon' algorithm to use
 %   options.optAlgo : structure to send to the algo function, see algo
 %   help.
 %   Same as options from ssresidEval.
@@ -14,8 +14,8 @@ function [f, p, opt, finalSSResid, exitFlag, hessian] = OptHRF(From, To, options
 % if ~isfield(options, 'func')
 %     options.func = 'gamma';
 % end
-% if ~isfield(options, 'interpMethod')
-%     options.interpMethod = 'spline';
+% if ~isfield(options, 'InterpolationMethod')
+%     options.InterpolationMethod = 'spline';
 % end
 % if ~isfield(options, 'ruleOutImag')
 %     options.ruleOutImag = false;
@@ -51,13 +51,13 @@ optionsCon = optimset('Display', 'off', ...
     'algorithm', 'sqp', ...
     'UseParallel','always');
 
-if strcmp(options.algo, 'fminsearch')
+if strcmp(options.Algorithm, 'fminsearch')
     options.optAlgo = optionsMinSearch;
-elseif strcmp(options.algo, 'simulannealbnd')
+elseif strcmp(options.Algorithm, 'simulannealbnd')
     options.optAlgo = optionsAnneal;
-elseif strcmp(options.algo, 'fminunc')
+elseif strcmp(options.Algorithm, 'fminunc')
     options.optAlgo = optionsNunc;
-elseif strcmp(options.algo, 'fmincon')
+elseif strcmp(options.Algorithm, 'fmincon')
     options.optAlgo = optionsCon;
 end
 
@@ -68,22 +68,22 @@ end
 
 anonFunction = @(param)ssresidEval(param, From, To, options);
 
-if strcmp(options.algo, 'fminsearch')
+if strcmp(options.Algorithm, 'fminsearch')
     [Variables, finalSSResid, exitFlag] = fminsearch(anonFunction, p, options.optAlgo);
     hessian = NaN;
-elseif strcmp(options.algo, 'simulannealbnd')
+elseif strcmp(options.Algorithm, 'simulannealbnd')
     [Variables, finalSSResid, exitFlag, ~] = simulannealbnd(anonFunction, p, options.lwBnd, options.upBnd, options.optAlgo);
     hessian = NaN;
-elseif strcmp(options.algo, 'fminunc')
+elseif strcmp(options.Algorithm, 'fminunc')
     [Variables, finalSSResid, exitFlag, ~, ~, hessian] = fminunc(anonFunction, p, options.optAlgo);
-elseif strcmp(options.algo, 'fmincon')
+elseif strcmp(options.Algorithm, 'fmincon')
     [Variables, finalSSResid, exitFlag, ~, ~, hessian] = fmincon(anonFunction, p, [], [], [], [], options.lwBnd, options.upBnd, [], options.optAlgo);
-elseif strcmp(options.algo, 'toeplitz')
+elseif strcmp(options.Algorithm, 'toeplitz')
     p = 'toeplitz';
     f = calculateTF(From(:, 2)', To(:, 2)', 'toeplitz');
     finalSSResid = 1;
     exitFlag = 0; hessian = NaN;
-elseif strcmp(options.algo, 'fourier')
+elseif strcmp(options.Algorithm, 'fourier')
     p = 'fourier';
     f = calculateTF(From(:, 2)', To(:, 2)', 'fourier');
     finalSSResid = 1;
@@ -91,7 +91,7 @@ elseif strcmp(options.algo, 'fourier')
 end
 
 if isa(options.func, 'function_handle')
-    time = [0:options.smoothDT:options.durationTF];
+    time = [0:options.SamplingTime:options.durationTF];
     cellParams = num2cell(Variables);
     f = options.func(cellParams{:}, time);
     p = Variables;

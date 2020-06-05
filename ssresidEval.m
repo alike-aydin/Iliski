@@ -9,16 +9,16 @@ function SSResid = ssresidEval(param, From, To, options)
 % options (struct) : options to be used by the function.
 %   options.func = '1-gamma'/'2-logit' TF shape to generate (number of
 %   param depends on it)
-%   options.interpMethod = 'spline'/'pchip'/... method of interpolation for
+%   options.InterpolationMethod = 'spline'/'pchip'/... method of interpolation for
 %   the convolution between From & TF
 %   options.ruleOutImag = true/false  Remainer from Davis and I's tests.
 
-time = [0:options.smoothDT:options.durationTF];
+time = [0:options.SamplingTime:options.durationTF];
 cellParams = num2cell(param);
 f = options.func(cellParams{:}, time);
 
 convolution = conv(From(:, 2), f); 
-convolution = interp1(From(:, 1), convolution(1:length(From(:, 2))), To(:, 1), options.interpMethod);
+convolution = interp1(From(:, 1), convolution(1:length(From(:, 2))), To(:, 1), options.InterpolationMethod);
 SSPredic = sum((To(1:end-1, 2) - convolution(1:end-1)).^2);
 
 SSResid = SSPredic;

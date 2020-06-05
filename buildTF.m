@@ -50,9 +50,9 @@ optionsCon = optimset('Display', 'off', ...
 %% TF computing
 clear matVar results resultStruct
 
-for i = 1:options.Nrun
+for i = 1:options.Iterations
     if options.twiceOpt
-        options.algo = 'simulannealbnd';
+        options.Algorithm = 'simulannealbnd';
         options.optAlgo = optionsAnneal;
         
         resultStruct = findTF(From, To, options);
@@ -60,7 +60,7 @@ for i = 1:options.Nrun
         options.paramsTF = resultStruct.paramTF;
         options.paramsTF_FirstStep = resultStruct.paramTF;
         
-        options.algo = 'fminunc';
+        options.Algorithm = 'fminunc';
         options.optAlgo = optionsNunc;
         resultStruct = findTF(From, To, options);
         
@@ -68,26 +68,26 @@ for i = 1:options.Nrun
         optParamDiff = resultStruct.Computed.Parameters - options.paramsTF_FirstStep;
         % disp(['Param Diff: ', num2str(optParamDiff)])
     else
-        if strcmp(options.algo, 'simulannealbnd')
+        if strcmp(options.Algorithm, 'simulannealbnd')
             options.optAlgo = optionsAnneal;
-        elseif strcmp(options.algo, 'fmincon')
+        elseif strcmp(options.Algorithm, 'fmincon')
             options.optAlgo = optionsCon;
-        elseif strcmp(options.algo, 'fminunc')
+        elseif strcmp(options.Algorithm, 'fminunc')
             options.optAlgo = optionsNunc;
-        elseif strcmp(options.algo, 'fminsearch')
+        elseif strcmp(options.Algorithm, 'fminsearch')
             options.optAlgo = optionsMinSearch;
         end
         
         resultStruct = findTF(From, To, options);
     end
     
-    if options.Nrun > 1 && i == 1
+    if options.Iterations > 1 && i == 1
         results = resultStruct;
         results.Computed.Parameters = [];
         results.Computed.Parameters(:, i) = resultStruct.Computed.Parameters';
         results.Computed.Hessian = [];
         results.Computed.Hessian(:, i) = resultStruct.Computed.Hessian;
-    elseif options.Nrun > 1
+    elseif options.Iterations > 1
         results.Computed.TF(:, :, i) = resultStruct.Computed.TF;
         results.Computed.Prediction(:, :, i) = resultStruct.Computed.Prediction;
         results.Computed.Parameters(:, i) = resultStruct.Computed.Parameters';
@@ -110,12 +110,12 @@ for i = 1:options.Nrun
 %         end
 %         if twiceOpt
 %             try
-%                 matVar.results.(Modality).(Tech).(Mouse).(['DT' num2str(options.smoothDT*1000)]).(options.func).('simulannealbnd_fminunc') = ...
-%                     [matVar.results.(Modality).(Tech).(Mouse).(['DT' num2str(options.smoothDT*1000)]).(options.func).('simulannealbnd_fminunc') ...
+%                 matVar.results.(Modality).(Tech).(Mouse).(['DT' num2str(options.SamplingTime*1000)]).(options.func).('simulannealbnd_fminunc') = ...
+%                     [matVar.results.(Modality).(Tech).(Mouse).(['DT' num2str(options.SamplingTime*1000)]).(options.func).('simulannealbnd_fminunc') ...
 %                     resultStruct];
 %             catch ME
 %                 if strcmp(ME.identifier, 'MATLAB:nonExistentField')
-%                     matVar.results.(Modality).(Tech).(Mouse).(['DT' num2str(options.smoothDT*1000)]).(options.func).('simulannealbnd_fminunc') = ...
+%                     matVar.results.(Modality).(Tech).(Mouse).(['DT' num2str(options.SamplingTime*1000)]).(options.func).('simulannealbnd_fminunc') = ...
 %                         resultStruct;
 %                 else
 %                     rethrow(ME);
@@ -123,12 +123,12 @@ for i = 1:options.Nrun
 %             end
 %         else
 %             try
-%                 matVar.results.(Modality).(Tech).(Mouse).(['DT' num2str(options.smoothDT*1000)]).(options.func).(options.algo) = ...
-%                     [matVar.results.(Modality).(Tech).(Mouse).(['DT' num2str(options.smoothDT*1000)]).(options.func).(options.algo) ...
+%                 matVar.results.(Modality).(Tech).(Mouse).(['DT' num2str(options.SamplingTime*1000)]).(options.func).(options.Algorithm) = ...
+%                     [matVar.results.(Modality).(Tech).(Mouse).(['DT' num2str(options.SamplingTime*1000)]).(options.func).(options.Algorithm) ...
 %                     resultStruct];
 %             catch ME
 %                 if strcmp(ME.identifier, 'MATLAB:nonExistentField')
-%                     matVar.results.(Modality).(Tech).(Mouse).(['DT' num2str(options.smoothDT*1000)]).(options.func).(options.algo) = ...
+%                     matVar.results.(Modality).(Tech).(Mouse).(['DT' num2str(options.SamplingTime*1000)]).(options.func).(options.Algorithm) = ...
 %                         resultStruct;
 %                 else
 %                     rethrow(ME);
@@ -144,7 +144,7 @@ for i = 1:options.Nrun
 %     end
 end
 
-% if options.Nrun>1
+% if options.Iterations > 1
 %     load handel
 %     sound(y,Fs)
 % end
