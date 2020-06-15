@@ -2,9 +2,9 @@
 % Calculate and return the transfer function given the datasets and the
 % method.
 % From, To : 1D scalar vector, datasets
-% Methods : 'toeplitz', 'fourier', '2gamma', '1gamma', '2logit, 
+% Methods : 'toeplitz', 'fourier'
 
-function TF = calculateTF(From, To, method, smoothing, timeVect)
+function TF = calculateTF(From, To, method)
     if strcmp(method,'toeplitz')
         N = length(From);
         Toeplitz = toeplitz([From zeros(1, N-1)], [From(1) zeros(1, N-1)]);
@@ -21,11 +21,6 @@ function TF = calculateTF(From, To, method, smoothing, timeVect)
     elseif strcmp(method, 'fourier')
         Fourier = fft(To)./ fft(From);
         TF = ifft(Fourier);
-    elseif strcmp(method, '2gamma')
-        TF = Gamma(From, To, timeVect);
     end
-    
-    if exist('smoothing', 'var')
-        TF = smooth(TF, smoothing);
-    end
+
 end
