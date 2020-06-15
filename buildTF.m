@@ -1,20 +1,5 @@
 function results = buildTF(From, To, options, savingName, savingFile)
 
-Modality = 'ET_250mV_5sec';
-Tech = 'Ca_fUS_HP';
-MatFile = 'Init_5p85_13_0p32_0p018.mat';  % Init_6_1_0_1.mat
-Mouse = 'XV5';
-
-% FileFrom = 'XV5_Dom.h5';
-% %to perform optimization on multiple trials just add the trials names to
-% %the following cell arrays
-% PathFrom = {'/DeltaOverBSL/Ca/ET_250mV_5sec/avg'};  %PATH_CA = {'/DeltaOverBSL/Ca/ET_250mV_120msec/avg'};  '/DeltaOverBSL/FUS/LowSpeed/SV/ET_250mV_5sec/ROI2/avg'
-%
-% % Step or RBC? If StepON is true, Calcium become the 'To' signal, if false calcium is 'From' signal
-% stepON= false; % if false, it takes the info on RBC
-% PathTo = {'/DeltaOverBSL/FUS/HighSpeed/SV/ET_250mV_5sec/ROI2/avg'}; %PATH_RBC = {'/DeltaOverBSL/RBC/ET_250mV_120msec/avg'}; {'/DeltaOverBSL/FUS/LowSpeed/SV/ET_1p5V_120msec/ROI2/avg'};
-% PATH_step = {'/5sec'};
-% FILE_step = 'steps_samp40ms.h5';
 tic
 
 optionsMinSearch = optimset('Display','off',...     % change iter-> off to display no output
@@ -51,21 +36,21 @@ optionsCon = optimset('Display', 'off', ...
 clear matVar results resultStruct
 
 for i = 1:options.Iterations
-    if options.twiceOpt
+    if options.FMinUncAfterSimulAnl
         options.Algorithm = 'simulannealbnd';
         options.optAlgo = optionsAnneal;
         
         resultStruct = findTF(From, To, options);
         
-        options.paramsTF = resultStruct.paramTF;
-        options.paramsTF_FirstStep = resultStruct.paramTF;
+        options.InitialParameters = resultStruct.Parameters;
+        options.InitialParameters_FirstStep = resultStruct.Parameters;
         
         options.Algorithm = 'fminunc';
         options.optAlgo = optionsNunc;
         resultStruct = findTF(From, To, options);
         
         % has the second algorithm changed anything?
-        optParamDiff = resultStruct.Computed.Parameters - options.paramsTF_FirstStep;
+        optParamDiff = resultStruct.Computed.Parameters - options.InitialParameters_FirstStep;
         % disp(['Param Diff: ', num2str(optParamDiff)])
     else
         if strcmp(options.Algorithm, 'simulannealbnd')
@@ -98,50 +83,6 @@ for i = 1:options.Iterations
     else
         results = resultStruct;
     end
-    
-
-    % Saving out results
-%     if options.saveOut
-%         %if input('Save ?') == 1
-%         try
-%             matVar = load(MatFile); % it looks for the output structure file
-%         catch
-%             matVar.results = struct(); % if not found, it makes a new one
-%         end
-%         if twiceOpt
-%             try
-%                 matVar.results.(Modality).(Tech).(Mouse).(['DT' num2str(options.SamplingTime*1000)]).(options.func).('simulannealbnd_fminunc') = ...
-%                     [matVar.results.(Modality).(Tech).(Mouse).(['DT' num2str(options.SamplingTime*1000)]).(options.func).('simulannealbnd_fminunc') ...
-%                     resultStruct];
-%             catch ME
-%                 if strcmp(ME.identifier, 'MATLAB:nonExistentField')
-%                     matVar.results.(Modality).(Tech).(Mouse).(['DT' num2str(options.SamplingTime*1000)]).(options.func).('simulannealbnd_fminunc') = ...
-%                         resultStruct;
-%                 else
-%                     rethrow(ME);
-%                 end
-%             end
-%         else
-%             try
-%                 matVar.results.(Modality).(Tech).(Mouse).(['DT' num2str(options.SamplingTime*1000)]).(options.func).(options.Algorithm) = ...
-%                     [matVar.results.(Modality).(Tech).(Mouse).(['DT' num2str(options.SamplingTime*1000)]).(options.func).(options.Algorithm) ...
-%                     resultStruct];
-%             catch ME
-%                 if strcmp(ME.identifier, 'MATLAB:nonExistentField')
-%                     matVar.results.(Modality).(Tech).(Mouse).(['DT' num2str(options.SamplingTime*1000)]).(options.func).(options.Algorithm) = ...
-%                         resultStruct;
-%                 else
-%                     rethrow(ME);
-%                 end
-%             end
-%         end
-%         results = matVar.results;
-%         save(MatFile, 'results');
-%         %end
-%         if options.Nrun>1
-%             close all
-%         end
-%     end
 end
 
 % if options.Iterations > 1

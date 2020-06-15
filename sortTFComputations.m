@@ -26,9 +26,10 @@ function [sortedResults] = sortTFComputations(results, direction)
 % If there is more than a single run
 if results.Header.Iterations > 1
     [~, sortedIdx] = sort(results.Computed.ResidualSumSquare, direction);
-    
     sortedResults = results;
     
+    % Just need to sort these bits of information, the other parts are the
+    % same. 
     sortedResults.Computed.TF = results.Computed.TF(:, :, sortedIdx);
     sortedResults.Computed.Prediction = results.Computed.Prediction(:, :, sortedIdx);
     sortedResults.Computed.Parameters = results.Computed.Parameters(:, sortedIdx);

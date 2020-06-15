@@ -12,7 +12,7 @@ function [f, p, opt, finalSSResid, exitFlag, hessian] = OptHRF(From, To, options
 %
 
 % if ~isfield(options, 'func')
-%     options.func = 'gamma';
+%     options.Function = 'gamma';
 % end
 % if ~isfield(options, 'InterpolationMethod')
 %     options.InterpolationMethod = 'spline';
@@ -62,8 +62,8 @@ elseif strcmp(options.Algorithm, 'fmincon')
 end
 
 
-if isa(options.func, 'function_handle')
-    p = options.paramsTF;
+if isa(options.Function, 'function_handle')
+    p = options.InitialParameters;
 end
 
 anonFunction = @(param)ssresidEval(param, From, To, options);
@@ -72,12 +72,12 @@ if strcmp(options.Algorithm, 'fminsearch')
     [Variables, finalSSResid, exitFlag] = fminsearch(anonFunction, p, options.optAlgo);
     hessian = NaN;
 elseif strcmp(options.Algorithm, 'simulannealbnd')
-    [Variables, finalSSResid, exitFlag, ~] = simulannealbnd(anonFunction, p, options.lwBnd, options.upBnd, options.optAlgo);
+    [Variables, finalSSResid, exitFlag, ~] = simulannealbnd(anonFunction, p, options.LowerBoundParameters, options.UpperBoundParameters, options.optAlgo);
     hessian = NaN;
 elseif strcmp(options.Algorithm, 'fminunc')
     [Variables, finalSSResid, exitFlag, ~, ~, hessian] = fminunc(anonFunction, p, options.optAlgo);
 elseif strcmp(options.Algorithm, 'fmincon')
-    [Variables, finalSSResid, exitFlag, ~, ~, hessian] = fmincon(anonFunction, p, [], [], [], [], options.lwBnd, options.upBnd, [], options.optAlgo);
+    [Variables, finalSSResid, exitFlag, ~, ~, hessian] = fmincon(anonFunction, p, [], [], [], [], options.LowerBoundParameters, options.UpperBoundParameters, [], options.optAlgo);
 elseif strcmp(options.Algorithm, 'toeplitz')
     p = 'toeplitz';
     f = calculateTF(From(:, 2)', To(:, 2)', 'toeplitz');
@@ -90,10 +90,10 @@ elseif strcmp(options.Algorithm, 'fourier')
     exitFlag = 0; hessian = NaN;
 end
 
-if isa(options.func, 'function_handle')
-    time = [0:options.SamplingTime:options.durationTF];
+if isa(options.Function, 'function_handle')
+    time = [0:options.SamplingTime:options.DurationTF];
     cellParams = num2cell(Variables);
-    f = options.func(cellParams{:}, time);
+    f = options.Function(cellParams{:}, time);
     p = Variables;
 end
 

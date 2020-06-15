@@ -2,11 +2,11 @@ function [resultStruct] = findTF(From, To, options)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
-[FromTreated(:, 1), FromTreated(:, 2)] = cutSignal(From(:, 1), From(:, 2), options.range);
-[ToTreated(:, 1), ToTreated(:, 2)] = cutSignal(To(:, 1), To(:, 2), options.range);
+[FromTreated(:, 1), FromTreated(:, 2)] = cutSignal(From(:, 1), From(:, 2), options.TimeIntervalRawData);
+[ToTreated(:, 1), ToTreated(:, 2)] = cutSignal(To(:, 1), To(:, 2), options.TimeIntervalRawData);
 
-if ~options.stepON
-    timeVector = options.range(1):options.SamplingTime:options.range(2);
+if ~options.IsFromStep
+    timeVector = options.TimeIntervalRawData(1):options.SamplingTime:options.TimeIntervalRawData(2);
        
     if options.MedianFilterFrom > 0
         FromTreated(:, 2) = medfilt1(FromTreated(:, 2), options.MedianFilterFrom);
@@ -46,19 +46,6 @@ R = corrcoef(ToTreated(1:end-1,2), pred(1:end-1));
 
 %%
 resultStruct = struct();
-% resultStruct.genOptions = opt;
-% resultStruct.finalSSResid = finalSSResid;
-% resultStruct.pearson = R(1, 2);
-% resultStruct.paramTF = param;
-% resultStruct.TF = tf;
-% resultStruct.fromDataRaw = From;
-% resultStruct.fromDataTreated = FromTreated;
-% resultStruct.toDataRaw = To;
-% resultStruct.toDataTreated = ToTreated;
-% %resultStruct.fig = fig;
-% resultStruct.exitFlag = exitFlag;
-% resultStruct.hessian = hessian;
-% resultStruct.date = datetime;
 
 resultStruct.Header = opt;
 
@@ -70,7 +57,7 @@ resultStruct.Computed = struct();
 resultStruct.Computed.FromTreated = FromTreated;
 resultStruct.Computed.ToTreated = ToTreated;
 resultStruct.Computed.Date = datetime;
-resultStruct.Computed.TF = [[0:options.SamplingTime:options.durationTF]' tf'];
+resultStruct.Computed.TF = [[0:options.SamplingTime:options.DurationTF]' tf'];
 resultStruct.Computed.Prediction = [FromTreated(:, 1) pred(1:length(FromTreated(:, 2)))];
 resultStruct.Computed.Parameters = param;
 resultStruct.Computed.Hessian = hessian;
