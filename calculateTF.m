@@ -17,6 +17,7 @@ function TF = calculateTF(From, To, method, smoothing, timeVect)
          end
 
         TF = Toeplitz\[To]';
+        TF = TF';
     elseif strcmp(method, 'fourier')
         Fourier = fft(To)./ fft(From);
         TF = ifft(Fourier);

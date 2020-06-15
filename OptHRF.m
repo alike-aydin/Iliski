@@ -1,4 +1,4 @@
-function [f, p, opt, finalSSResid, exitFlag, hessian] = OptHRF(From, To, options)
+function [f, p, options, finalSSResid, exitFlag, hessian] = OptHRF(From, To, options)
 %
 %
 %
@@ -10,16 +10,6 @@ function [f, p, opt, finalSSResid, exitFlag, hessian] = OptHRF(From, To, options
 %
 %
 %
-
-% if ~isfield(options, 'func')
-%     options.Function = 'gamma';
-% end
-% if ~isfield(options, 'InterpolationMethod')
-%     options.InterpolationMethod = 'spline';
-% end
-% if ~isfield(options, 'ruleOutImag')
-%     options.ruleOutImag = false;
-% end
 
 optionsMinSearch = optimset('Display','off',...     % change iter-> off to display no output
     'FunValCheck','off',...  % check objective values
@@ -78,16 +68,14 @@ elseif strcmp(options.Algorithm, 'fminunc')
     [Variables, finalSSResid, exitFlag, ~, ~, hessian] = fminunc(anonFunction, p, options.optAlgo);
 elseif strcmp(options.Algorithm, 'fmincon')
     [Variables, finalSSResid, exitFlag, ~, ~, hessian] = fmincon(anonFunction, p, [], [], [], [], options.LowerBoundParameters, options.UpperBoundParameters, [], options.optAlgo);
-elseif strcmp(options.Algorithm, 'toeplitz')
-    p = 'toeplitz';
-    f = calculateTF(From(:, 2)', To(:, 2)', 'toeplitz');
-    finalSSResid = 1;
+elseif strcmp(options.Algorithm, 'toeplitz') || strcmp(options.Algorithm, 'fourier')
+    p = options.Algorithm;
+    f = calculateTF(From(:, 2)', To(:, 2)', options.Algorithm);
+    convolution = conv(From(:, 2)', f);
+    finalSSResid = sum((To(1:end-1, 2) - convolution(1:size(To, 1)-1)).^2);
     exitFlag = 0; hessian = NaN;
-elseif strcmp(options.Algorithm, 'fourier')
-    p = 'fourier';
-    f = calculateTF(From(:, 2)', To(:, 2)', 'fourier');
-    finalSSResid = 1;
-    exitFlag = 0; hessian = NaN;
+else
+    % CREATE ERROR HERE
 end
 
 if isa(options.Function, 'function_handle')
@@ -96,7 +84,5 @@ if isa(options.Function, 'function_handle')
     f = options.Function(cellParams{:}, time);
     p = Variables;
 end
-
-opt = options;
 
 end

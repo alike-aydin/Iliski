@@ -28,8 +28,8 @@ if results.Header.Iterations > 1
     [~, sortedIdx] = sort(results.Computed.ResidualSumSquare, direction);
     sortedResults = results;
     
-    % Just need to sort these bits of information, the other parts are the
-    % same. 
+    % Just need to sort these bits of information, the subfield Computed, 
+    % the other parts are the same. 
     sortedResults.Computed.TF = results.Computed.TF(:, :, sortedIdx);
     sortedResults.Computed.Prediction = results.Computed.Prediction(:, :, sortedIdx);
     sortedResults.Computed.Parameters = results.Computed.Parameters(:, sortedIdx);
