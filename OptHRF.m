@@ -72,7 +72,7 @@ elseif strcmp(options.Algorithm, 'toeplitz') || strcmp(options.Algorithm, 'fouri
     p = options.Algorithm;
     f = calculateTF(From(:, 2)', To(:, 2)', options.Algorithm);
     convolution = conv(From(:, 2)', f);
-    finalSSResid = sum((To(1:end-1, 2) - convolution(1:size(To, 1)-1)).^2);
+    finalSSResid = sum((To(1:end, 2) - convolution(1:size(To, 1))).^2);
     exitFlag = 0; hessian = NaN;
 else
     % CREATE ERROR HERE

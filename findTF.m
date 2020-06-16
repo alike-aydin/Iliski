@@ -41,8 +41,9 @@ end
 [tf, param, opt, finalSSResid, exitFlag, hessian] = OptHRF(FromTreated, ToTreated, options);
 
 pred = conv(FromTreated(:, 2), tf);
-pred = interp1(FromTreated(:, 1), pred(1:length(FromTreated(:, 2))), ToTreated(:,1), 'linear');
-R = corrcoef(ToTreated(1:end-1,2), pred(1:end-1));
+pred = pred(1:size(FromTreated, 1));
+pred = interp1(FromTreated(:, 1), pred(1:length(FromTreated(:, 2))), ToTreated(:,1), 'linear', 'extrap');
+R = corrcoef(ToTreated(:, 2), pred);
 
 %%
 resultStruct = struct();
@@ -58,7 +59,7 @@ resultStruct.Computed.FromTreated = FromTreated;
 resultStruct.Computed.ToTreated = ToTreated;
 resultStruct.Computed.Date = datetime;
 resultStruct.Computed.TF = [[0:options.SamplingTime:(length(tf)-1)*options.SamplingTime]' tf'];
-resultStruct.Computed.Prediction = [FromTreated(:, 1) pred(1:length(FromTreated(:, 2)))];
+resultStruct.Computed.Prediction = [ToTreated(:, 1) pred];
 resultStruct.Computed.Parameters = param';
 resultStruct.Computed.Hessian = hessian;
 resultStruct.Computed.ExitFlag = exitFlag;
