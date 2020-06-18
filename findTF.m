@@ -26,8 +26,8 @@ end
 if options.MedianFilterTo > 0
     ToTreated(:, 2) = medfilt1(ToTreated(:, 2), options.MedianFilterTo);
 end
-if options.SgolayFilterTo > 0
-    ToTreated(:, 2) = sgolayfilt(ToTreated(:, 2), 3, options.SgolayFilterTo);
+if options.SGolayFilterTo > 0
+    ToTreated(:, 2) = sgolayfilt(ToTreated(:, 2), 3, options.SGolayFilterTo);
 end
 
 % If the TF is deconvolutional, TO should have the same dT as From
