@@ -5,7 +5,7 @@ function [f, p, finalSSResid, exitFlag, hessian] = OptTF(From, To, options)
 %
 %   Author: Ali-Kemal Aydin, PhD student
 %   Mail: ali-kemal.aydin@inserm.fr
-%   Affiliation: 
+%   Affiliation:
 %       * INSERM U1128, Laboratory of Neurophysiology and New Microscopy, Université de Paris, Paris, France
 %       * INSERM, CNRS, Institut de la Vision, Sorbonne Université, Paris, France
 %   License:  Creative Commons Attribution 4.0 International (CC BY 4.0)
@@ -14,13 +14,13 @@ function [f, p, finalSSResid, exitFlag, hessian] = OptTF(From, To, options)
 %
 %   DESCRIPTION: Optimize the transfer function linking the input and the
 %   output signal by the convolutional operation. There are many options,
-%   see BUILDTF for detailed informations. 
+%   see BUILDTF for detailed informations.
 %__________________________________________________________________________
 %   PARAMETERS:
-%       From ([double, double]): 2D matrix of the input data, with the time vector as 
+%       From ([double, double]): 2D matrix of the input data, with the time vector as
 %       the first column and the datapoints as the second one.
 %
-%       To ([double, double]): 2D matrix of the output data, with the time vector as 
+%       To ([double, double]): 2D matrix of the output data, with the time vector as
 %       the first column and the datapoints as the second one.
 %
 %       options (struct): structure containing one field per option to
@@ -32,7 +32,7 @@ function [f, p, finalSSResid, exitFlag, hessian] = OptTF(From, To, options)
 %       time vector).
 %
 %       p ([double]): 1D array containing the optimized parameters of the
-%       parametric function. It is NaN if the function is not parametric 
+%       parametric function. It is NaN if the function is not parametric
 %       (toeplitz or fourier).
 %
 %       finalSSResid (double): Residual square sum corresponding to the
@@ -55,57 +55,16 @@ function [f, p, finalSSResid, exitFlag, hessian] = OptTF(From, To, options)
 %           this exception.
 %__________________________________________________________________________
 
-optionsMinSearch = optimset('Display','off',...     % change iter-> off to display no output
-    'FunValCheck','off',...  % check objective values
-    'MaxFunEvals', 10000,...  % max number of function evaluations allowed
-    'MaxIter', 10000,...      % max number of iteration allowed
-    'TolFun',1e-8,...        % termination tolerance on the function value
-    'TolX',1e-8,...          % termination tolerance on x
-    'UseParallel','always'); % always use parallel computation
-
-optionsAnneal = saoptimset('Display','off',...     % change iter-> off to display no output
-    'MaxFunEval', 10000,...  % max number of function evaluations allowed
-    'MaxIter', 10000,...      % max number of iteration allowed
-    'TolFun',1e-10, ... % termination tolerance on the function value
-    'ObjectiveLimit', 0);
-
-optionsNunc = optimset('Display', 'off', ...
-    'MaxFunEval', 10000,...
-    'MaxIter', 10000,...
-    'TolFun',1e-8,...
-    'TolX',1e-8,...
-    'algorithm', 'trust-region', ...
-    'UseParallel','always');
-
-optionsCon = optimset('Display', 'off', ...
-    'MaxFunEval', 10000,...
-    'MaxIter', 10000,...
-    'TolFun',1e-8,...
-    'TolX',1e-8,...
-    'algorithm', 'sqp', ...
-    'UseParallel','always');
-
-if strcmp(options.Algorithm, 'fminsearch')
-    options.optAlgo = optionsMinSearch;
-elseif strcmp(options.Algorithm, 'simulannealbnd')
-    options.optAlgo = optionsAnneal;
-elseif strcmp(options.Algorithm, 'fminunc')
-    options.optAlgo = optionsNunc;
-elseif strcmp(options.Algorithm, 'fmincon')
-    options.optAlgo = optionsCon;
-end
-
-
-if isa(options.Function, 'function_handle')
-    p = options.InitialParameters;
-end
-
-hessian = NaN;
-p = NaN;
-exitFlag = 1;
-
-anonFunction = @(param)ssresidEval(param, From, To, options);
-% try
+try
+    if isa(options.Function, 'function_handle')
+        p = options.InitialParameters;
+    end
+    
+    hessian = NaN;
+    exitFlag = 1;
+    
+    anonFunction = @(param)ssresidEval(param, From, To, options);
+    
     if strcmp(options.Algorithm, 'fminsearch')
         [p, finalSSResid, exitFlag] = fminsearch(anonFunction, p, options.optAlgo);
     elseif strcmp(options.Algorithm, 'simulannealbnd')
@@ -118,23 +77,26 @@ anonFunction = @(param)ssresidEval(param, From, To, options);
         f = calculateTF(From(:, 2)', To(:, 2)', options.Algorithm);
         convolution = conv(From(:, 2)', f);
         finalSSResid = sum((To(1:end, 2) - convolution(1:size(To, 1))).^2);
+        p = NaN;
     else
         errMsg = 'The computation algorithm is unknown. Contact the developer (see Help or About) to solve the issue.';
         err = MException('Iliski:TFOptimization:UnknownAlgorithm', errMsg);
         throw(err);
     end
-
+    
     if isa(options.Function, 'function_handle')
         time = [0:options.SamplingTime:options.DurationTF];
         cellParams = num2cell(p);
         f = options.Function(cellParams{:}, time);
     end
-% catch ME
-%     if strfind(ME.identifier, 'Iliski')
-%         throw(ME)
-%     else
-%         throw(ME);
-%     end
-% end
+catch ME
+    if strfind(ME.identifier, 'Iliski')
+        rethrow(ME)
+    else
+        errMsg = ['A Matlab error occured during the optimization of the TF. '...
+            'For further details, see the Matlab report below. Contact the developer (see About or Help) to solve the issue. \n\n'];
+        throw(MException('Iliski:TFOptimization:MatlabError', [errMsg getReport(ME)]));
+    end
+end
 
 end
