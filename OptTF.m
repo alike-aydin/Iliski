@@ -105,7 +105,7 @@ p = NaN;
 exitFlag = 1;
 
 anonFunction = @(param)ssresidEval(param, From, To, options);
-try
+% try
     if strcmp(options.Algorithm, 'fminsearch')
         [p, finalSSResid, exitFlag] = fminsearch(anonFunction, p, options.optAlgo);
     elseif strcmp(options.Algorithm, 'simulannealbnd')
@@ -129,12 +129,12 @@ try
         cellParams = num2cell(p);
         f = options.Function(cellParams{:}, time);
     end
-catch ME
-    if strfind(ME, 'Iliski')
-        throw(ME)
-    else
-        throw(MException('Iliski:TFOptimization:MatlabError', getReport(ME)));
-    end
-end
+% catch ME
+%     if strfind(ME.identifier, 'Iliski')
+%         throw(ME)
+%     else
+%         throw(ME);
+%     end
+% end
 
 end
