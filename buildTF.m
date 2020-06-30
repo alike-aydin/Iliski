@@ -38,8 +38,8 @@ try
             
             resultStruct = findTF(From, To, options);
             
-            options.InitialParameters = resultStruct.Parameters;
-            options.InitialParameters_FirstStep = resultStruct.Parameters;
+            options.InitialParameters = resultStruct.Computed.Parameters;
+            options.InitialParameters_FirstStep = resultStruct.Computed.Parameters;
             
             options.Algorithm = 'fminunc';
             options.optAlgo = optionsNunc;
