@@ -67,12 +67,12 @@ try
             results.Computed.Parameters = [];
             results.Computed.Parameters(:, i) = resultStruct.Computed.Parameters';
             results.Computed.Hessian = [];
-            results.Computed.Hessian(:, i) = resultStruct.Computed.Hessian;
+            results.Computed.Hessian(:, :, i) = resultStruct.Computed.Hessian;
         elseif options.Iterations > 1
             results.Computed.TF(:, :, i) = resultStruct.Computed.TF;
             results.Computed.Prediction(:, :, i) = resultStruct.Computed.Prediction;
             results.Computed.Parameters(:, i) = resultStruct.Computed.Parameters';
-            results.Computed.Hessian(:, i) = resultStruct.Computed.Hessian;
+            results.Computed.Hessian(:, :, i) = resultStruct.Computed.Hessian;
             results.Computed.ExitFlag(i) = resultStruct.Computed.ExitFlag;
             results.Computed.Pearson(i) = resultStruct.Computed.Pearson;
             results.Computed.ResidualSumSquare(i) = resultStruct.Computed.ResidualSumSquare;
