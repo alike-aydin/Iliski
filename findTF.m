@@ -51,6 +51,9 @@ try
     pred = pred(1:size(FromTreated, 1));
     pred = interp1(FromTreated(:, 1), pred(1:length(FromTreated(:, 2))), ToTreated(:,1), 'linear', 'extrap');
     R = corrcoef(ToTreated(:, 2), pred);
+    if isnan(R(1, 2))
+        R(1, 2) = -9999;
+    end
     
 catch ME
     if strfind(ME.identifier, 'Iliski')

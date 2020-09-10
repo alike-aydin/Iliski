@@ -38,7 +38,7 @@ try
             
             resultStruct = findTF(From, To, options);
             
-            options.InitialParameters = resultStruct.Computed.Parameters;
+            options.InitialParameters = resultStruct.Computed.Parameters';
             options.InitialParameters_FirstStep = resultStruct.Computed.Parameters;
             
             options.Algorithm = 'fminunc';
@@ -67,7 +67,7 @@ try
             results.Computed.Parameters = [];
             results.Computed.Parameters(:, i) = resultStruct.Computed.Parameters';
             results.Computed.Hessian = [];
-            results.Computed.Hessian(:, :, i) = resultStruct.Computed.Hessian;
+            results.Computed.Hessian(:, i) = resultStruct.Computed.Hessian;
         elseif options.Iterations > 1
             results.Computed.TF(:, :, i) = resultStruct.Computed.TF;
             results.Computed.Prediction(:, :, i) = resultStruct.Computed.Prediction;
@@ -86,7 +86,10 @@ catch ME
     else
         errMsg = ['A Matlab error occured during the computation of the TF. ' ...
             'For further details, see the Matlab report below. Contact the developer (see About or Help) to solve the issue.\n\n'];
-        throw(MException('Iliski:TFComputation:MatlabError', [errMsg, getReport(ME)]));
+        ME2 = MException('Iliski:TFComputation:MatlabError', errMsg);
+        ME2.stack = ME.stack;
+        throw(M2);
+        %rethrow(addCause(ME, ME2));
     end
 end
 % if options.Iterations > 1
