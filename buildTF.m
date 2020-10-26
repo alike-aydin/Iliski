@@ -1,4 +1,78 @@
-function results = buildTF(From, To, options, savingName, savingFile)
+function results = buildTF(From, To, options)
+% BUILDTF Framework function to compute a TF.
+%
+% function results = buildTF(From, To, options)
+%
+%   Author: Ali-Kemal Aydin, PhD student
+%   Mail: ali-kemal.aydin@inserm.fr
+%   Affiliations: 
+%       * INSERM U1128, Laboratory of Neurophysiology and New Microscopy, Université de Paris, Paris, France
+%       * INSERM, CNRS, Institut de la Vision, Sorbonne Université, Paris, France
+%   License:  Creative Commons Attribution 4.0 International (CC BY 4.0)
+%       See LICENSE.txt or <a href="matlab:web('https://creativecommons.org/licenses/by/4.0/')">here</a>
+%       for a human-readable version.
+%
+%   DESCRIPTION: Initialize the optimization parameters and launch the
+%   computation process. Apart from specific parameters in the options
+%   structure, optimization parameters are defined in this function. Output
+%   structure contains every information needed to compute the TF and how
+%   it turned out.
+%__________________________________________________________________________
+%   PARAMETERS:
+%       From ([double, double]): 2D matrix of the input data, with the time
+%       vector as the first column and the datapoints as the second one.
+%
+%       To ([double, double]): 2D matrix of the output data, with the time 
+%       vector as the first column and the datapoints as the second one.
+%
+%       options (struct): structure containing one field per option to
+%       specify for the optimization. Fields:
+%           * Iterations (int): Number of iterations to perform, applicable to
+%           non-deterministic optimization algorithm (Simulated Annealing)
+%           * MedianFilterFrom (int): 0 to not apply a median filter, the
+%           number of points to use for the median filter otherwise (see 
+%           MEDFILT1) to the From signal.
+%           * SGolayFilterFrom (int): 0 to not apply a savitzky-golay filter,
+%           the impair number of points to use as a window otherwise (see 
+%           SGOLAYFILTER) to the From signal.
+%           * MedianFilterTo (int): 0 to not apply a median filter, the
+%           number of points to use for the median filter otherwise (see 
+%           MEDFILT1) to the To signal.
+%           * SGolayFilterTo (int): 0 to not apply a savitzky-golay filter,
+%           the impair number of points to use as a window otherwise (see 
+%           SGOLAYFILTER) to the To signal.
+%           * InterpolationMethod (str): If the From signal is
+%           interpolated, the method to be used will be this one (see
+%           INTERP1 for all the possiblities of the method parameter).
+%           * SamplingTime (double): Duration in millisecond of the new deltaT
+%           for the interpolation. Use the current dT to
+%           avoid doing any interpolation.
+%           * TimeIntervalRawData ([double double]): Time interval in second
+%           to cut the From and To signals to before pre-treating and 
+%           computing TFs.
+%           * DurationTF (double): Duration of your TF in second.
+%           * IsFromStep (bool): 
+%
+%__________________________________________________________________________
+%   RETURN:
+%       resultStruct (struct): structure containing all the informations
+%       which allowed to compute the TF and its results. BUILDTF builds
+%       over this structure to accomodate for multiple TF computations. See
+%       BUILDTF for details about this structure.
+%__________________________________________________________________________
+%   EXCEPTION:
+%       Iliski:PredictionComputation:MatlabError
+%           If a Matlab Error occured during the pre-treatment of the data.
+%
+%      Iliski:PredictionComputation:MatlabError
+%           If a Matlab Error occured during the computation of the TF
+%           (OPTTF function).
+%
+%      Iliski:ResultStructure:MatlabError
+%           If a Matlab Error occured the creation of the Result Structure.        
+%__________________________________________________________________________
+
+
 optionsMinSearch = optimset('Display','off',...     % change iter-> off to display no output
     'FunValCheck','off',...  % check objective values
     'MaxFunEvals', 10000,...  % max number of function evaluations allowed
@@ -92,9 +166,5 @@ catch ME
         %rethrow(addCause(ME, ME2));
     end
 end
-% if options.Iterations > 1
-%     load handel
-%     sound(y,Fs)
-% end
 end
 

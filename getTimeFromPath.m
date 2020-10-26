@@ -1,43 +1,53 @@
-%% getTimeFromPath.m
-% Function that will return the time vector from a given path in the
-% database.
-% DB should be like this :
-% BOLD/fUS/Ca/RBCs folders inside Delta/DeltaOvB/Raw
-% BOLD/fUS => time folder and time vector inside
-% Ca => time vector inside CC folders for Delta & DeltaOvB, trial-specific
-%   time vector for Raw.
-% RBCs => to be defined
-
-
 function [time] = getTimeFromPath(file, path)
-splitted = strsplit(path, '/');
+% GETTIMEFROMPATH Recover the time vector inside the HDF5 file for a given
+% timeserie.
+%
+% function [time] = getTimeFromPath(file, path)
+%
+%   Author: Ali-Kemal Aydin, PhD student
+%   Mail: ali-kemal.aydin@inserm.fr
+%   Affiliations:
+%       * INSERM U1128, Laboratory of Neurophysiology and New Microscopy, Université de Paris, Paris, France
+%       * INSERM, CNRS, Institut de la Vision, Sorbonne Université, Paris, France
+%   License:  Creative Commons Attribution 4.0 International (CC BY 4.0)
+%       See LICENSE.txt or <a href="matlab:web('https://creativecommons.org/licenses/by/4.0/')">here</a>
+%       for a human-readable version.
+%
+%   DESCRIPTION: Return the matching time vector corresponding to a
+%   timeserie from the same HDF5 file. Time vector is supposed to be in the
+%   same folder as the timeserie inside the HDF5 file and to be called
+%   'time'.
+%__________________________________________________________________________
+%   PARAMETERS:
+%       file (str): HDF5 file containing both the timeserie and the
+%       timevector.
+%
+%       path (str): Path to the timeserie inside the HDF5 file.
+%__________________________________________________________________________
+%   RETURN:
+%       time ([double]): Corresponding time vector.
+%__________________________________________________________________________
+%   EXCEPTION:
+%       Iliski:RecoverTimeVector:TimeNotFound
+%           If the time vector has not been found at the expected location
+%           in the HDF5 file.
+%__________________________________________________________________________
 
-if contains(file, 'steps')
-    splitted(end) = {'time'};
-else
-    tech = getTechFromPath(path);
-    
-    if strcmp(tech, 'BOLD')% | strcmp(tech, 'FUS')
-        splitted(end) = {'time'};
-    elseif strcmp(tech, 'FUS')
-        splitted(end) = {'time'};
-    else% strcmp(tech, 'RBC') | strcmp(tech, 'Ca')
-        %         if strcmp(splitted{end}, 'avg') | strcmp(splitted{2}, 'Delta') | ...
-        %                 strcmp(splitted{2}, 'DeltaOvB')
-        if strcmp(splitted{2}, 'Raw')
-            tmp = split(splitted{end}, '');
-            splitted{end} = strjoin({tmp{2}, '_t', tmp{end-1}}, '');
-        else
-            splitted(end) = {'time'};
-        end
-        %         else
-        %             trial = strsplit(splitted{end}, '_');
-        %             splitted{end} = strjoin({trial{1}, ['t', trial{2}]}, '_');
-        %         end
+splitted = strsplit(path, '/');
+splitted(end) = {'time'};
+path = strjoin(splitted, '/');
+try
+    time = h5read(file, path);
+catch ME
+    if strfind(ME.message, 'not found')
+        errID = 'Iliski:RecoverTimeVector:TimeNotFound';
+        errMsg = ['Time vector for your data was not found at the expected ' ...
+            'place in the HDF5 file. Check the arborescence of your file.\n' ...
+            'Expected path was : ' path];
+        throw(MException(errID, errMsg));
+    else
+        rethrow(ME);
     end
 end
-
-path = strjoin(splitted, '/');
-time = h5read(file, path);
 end
 

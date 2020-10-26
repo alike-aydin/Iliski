@@ -1,6 +1,51 @@
 function [resultStruct] = findTF(From, To, options)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+% FINDTF Prepare the data and compute a single TF for a set of in/ouput
+% signal.
+%
+% function [resultStruct] = findTF(From, To, options)
+%
+%   Author: Ali-Kemal Aydin, PhD student
+%   Mail: ali-kemal.aydin@inserm.fr
+%   Affiliations:
+%       * INSERM U1128, Laboratory of Neurophysiology and New Microscopy, Université de Paris, Paris, France
+%       * INSERM, CNRS, Institut de la Vision, Sorbonne Université, Paris, France
+%   License:  Creative Commons Attribution 4.0 International (CC BY 4.0)
+%       See LICENSE.txt or <a href="matlab:web('https://creativecommons.org/licenses/by/4.0/')">here</a>
+%       for a human-readable version.
+%
+%   DESCRIPTION: Compute a single TF according to the given options after
+%   having treated the data if needed. Calls OPTTF for the TF computation
+%   and is called by BUILDTF to manage multiple TF computations at once.
+%__________________________________________________________________________
+%   PARAMETERS:
+%       From ([double, double]): 2D matrix of the input data, with the time
+%       vector as the first column and the datapoints as the second one.
+%
+%       To ([double, double]): 2D matrix of the output data, with the time 
+%       vector as the first column and the datapoints as the second one.
+%
+%       options (struct): structure containing one field per option to
+%       specify for the optimization. See BUILDTF for further details about
+%       all the options.
+%
+%__________________________________________________________________________
+%   RETURN:
+%       resultStruct (struct): structure containing all the informations
+%       which allowed to compute the TF and its results. BUILDTF builds
+%       over this structure to accomodate for multiple TF computations. See
+%       BUILDTF for details about this structure.
+%__________________________________________________________________________
+%   EXCEPTION:
+%       Iliski:PredictionComputation:MatlabError
+%           If a Matlab Error occured during the pre-treatment of the data.
+%
+%      Iliski:PredictionComputation:MatlabError
+%           If a Matlab Error occured during the computation of the
+%           prediction after the TF has been computed.
+%
+%      Iliski:ResultStructure:MatlabError
+%           If a Matlab Error occured the creation of the Result Structure.
+%__________________________________________________________________________
 
 try
     [FromTreated(:, 1), FromTreated(:, 2)] = cutSignal(From(:, 1), From(:, 2), options.TimeIntervalRawData);
@@ -10,7 +55,7 @@ try
         timeVector = options.TimeIntervalRawData(1):options.SamplingTime:options.TimeIntervalRawData(2);
         
         if options.MedianFilterFrom > 0
-            FromTreated(:, 2) = medfilt1(FromTreated(:, 2), options.MedianFilterFrom);
+            FromTreated(:, 2) = movmedian(FromTreated(:, 2), options.MedianFilterFrom);
         end
         if options.SGolayFilterFrom > 0
             FromTreated(:, 2) = sgolayfilt(FromTreated(:, 2), 3, options.SGolayFilterFrom);
@@ -25,7 +70,7 @@ try
     
     %%
     if options.MedianFilterTo > 0
-        ToTreated(:, 2) = medfilt1(ToTreated(:, 2), options.MedianFilterTo);
+        ToTreated(:, 2) = movmedian(ToTreated(:, 2), options.MedianFilterTo);
     end
     if options.SGolayFilterTo > 0
         ToTreated(:, 2) = sgolayfilt(ToTreated(:, 2), 3, options.SGolayFilterTo);
@@ -38,9 +83,13 @@ try
         ToTreated = To_int;
     end
 catch ME
-    errMsg = ['A Matlab error occured during the pre-treatment of your data. ' ...
-        'For further details, see the Matlab report below. Contact the developer (see About or Help) to solve the issue.'];
-    throw(MException('Iliski:DataPreTreatment:MatlabError', [errMsg, getReport(ME)]));
+    if strfind(ME.identifier, 'Iliski')
+        rethrow(ME);
+    else
+        errMsg = ['A Matlab error occured during the pre-treatment of your data. ' ...
+            'For further details, see the Matlab report below. Contact the developer (see About or Help) to solve the issue.'];
+        throw(MException('Iliski:DataPreTreatment:MatlabError', errMsg));
+    end
 end
 
 %% RSS1 optimization

@@ -5,7 +5,7 @@ function [f, p, finalSSResid, exitFlag, hessian] = OptTF(From, To, options)
 %
 %   Author: Ali-Kemal Aydin, PhD student
 %   Mail: ali-kemal.aydin@inserm.fr
-%   Affiliation:
+%   Affiliations:
 %       * INSERM U1128, Laboratory of Neurophysiology and New Microscopy, Université de Paris, Paris, France
 %       * INSERM, CNRS, Institut de la Vision, Sorbonne Université, Paris, France
 %   License:  Creative Commons Attribution 4.0 International (CC BY 4.0)
@@ -17,11 +17,11 @@ function [f, p, finalSSResid, exitFlag, hessian] = OptTF(From, To, options)
 %   see BUILDTF for detailed informations.
 %__________________________________________________________________________
 %   PARAMETERS:
-%       From ([double, double]): 2D matrix of the input data, with the time vector as
-%       the first column and the datapoints as the second one.
+%       From ([double, double]): 2D matrix of the input data, with the time
+%       vector as the first column and the datapoints as the second one.
 %
-%       To ([double, double]): 2D matrix of the output data, with the time vector as
-%       the first column and the datapoints as the second one.
+%       To ([double, double]): 2D matrix of the output data, with the time 
+%       vector as the first column and the datapoints as the second one.
 %
 %       options (struct): structure containing one field per option to
 %       specify for the optimization. See BUILDTF for further details about
@@ -74,7 +74,7 @@ try
     elseif strcmp(options.Algorithm, 'fmincon')
         [p, finalSSResid, exitFlag, ~, ~, hessian] = fmincon(anonFunction, p, [], [], [], [], options.LowerBoundParameters, options.UpperBoundParameters, [], options.optAlgo);
     elseif strcmp(options.Algorithm, 'toeplitz') || strcmp(options.Algorithm, 'fourier')
-        f = calculateTF(From(:, 2)', To(:, 2)', options.Algorithm);
+        f = computeDeconvTF(From(:, 2)', To(:, 2)', options.Algorithm);
         convolution = conv(From(:, 2)', f);
         finalSSResid = sum((To(1:end, 2) - convolution(1:size(To, 1))).^2);
         p = NaN;

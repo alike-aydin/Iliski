@@ -16,11 +16,11 @@ function [paramNames] = extractParametersFromHandle(fctHandle)
 %       - Last parameter is named 't'
 %__________________________________________________________________________
 %   PARAMETERS:
-%       fctHandle (handle) : handle of the function.
+%       fctHandle (handle): handle of the function.
 %
 %__________________________________________________________________________
 %   RETURN:
-%       paramNames ({}) : cell array of the function parameters.
+%       paramNames ({}): cell array of the function parameters.
 %__________________________________________________________________________
 
 strFct = func2str(fctHandle);

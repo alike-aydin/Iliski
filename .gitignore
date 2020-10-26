@@ -29,3 +29,4 @@ octave-workspace
 
 # H5 file for testing 
 *.h5
+data.mat
