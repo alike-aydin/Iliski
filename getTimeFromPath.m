@@ -37,7 +37,7 @@ splitted = strsplit(path, '/');
 splitted(end) = {'time'};
 path = strjoin(splitted, '/');
 try
-    time = h5read(file, path);
+    time = squeeze(h5read(file, path));
 catch ME
     if strfind(ME.message, 'not found')
         errID = 'Iliski:RecoverTimeVector:TimeNotFound';

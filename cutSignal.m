@@ -38,6 +38,9 @@ function [time, sign] = cutSignal(time, sign, range)
 
     if range(1) < min(time) || range(1) > max(time) || ... 
         range(2) < min(time) || range(2) > max(time)
+        range
+        min(time)
+        max(time)
         errID = 'Iliski:CutSignal:UnadaptedTimeRange';
         errMsg = 'The desired time range is outside the actual one. Check your values.';
         throw(MException(errID, errMsg));
