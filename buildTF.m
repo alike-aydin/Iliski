@@ -156,14 +156,12 @@ try
     end
 catch ME
     if strfind(ME.identifier, 'Iliski')
-        rethrow(ME)
+        rethrow(ME);
     else
         errMsg = ['A Matlab error occured during the computation of the TF. ' ...
             'For further details, see the Matlab report below. Contact the developer (see About or Help) to solve the issue.\n\n'];
-        ME2 = MException('Iliski:TFComputation:MatlabError', errMsg);
-        ME2.stack = ME.stack;
-        throw(M2);
-        %rethrow(addCause(ME, ME2));
+        ME = addCause(ME, MException('Iliski:TFComputation:MatlabError', errMsg));
+        throw(ME);
     end
 end
 end

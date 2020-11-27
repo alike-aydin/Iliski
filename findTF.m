@@ -117,7 +117,14 @@ end
 try
     resultStruct = struct();
     
+    timeTF = [0:options.SamplingTime:(length(tf)-1)*options.SamplingTime];
+    
     resultStruct.Header = options;
+    resultStruct.Header.InitialTF = [];
+    if isa(options.Function, 'function_handle')
+       p = num2cell(options.InitialParameters);
+       resultStruct.Header.InitialTF = [timeTF' options.Function(p{:}, timeTF)'];
+    end
     
     resultStruct.InputData = struct();
     resultStruct.InputData.From = From;
@@ -127,7 +134,7 @@ try
     resultStruct.Computed.FromTreated = FromTreated;
     resultStruct.Computed.ToTreated = ToTreated;
     resultStruct.Computed.Date = datetime;
-    resultStruct.Computed.TF = [[0:options.SamplingTime:(length(tf)-1)*options.SamplingTime]' tf'];
+    resultStruct.Computed.TF = [timeTF' tf'];
     resultStruct.Computed.Prediction = [ToTreated(:, 1) pred];
     resultStruct.Computed.Parameters = param';
     resultStruct.Computed.Hessian = hessian;
@@ -137,7 +144,8 @@ try
 catch ME
     errMsg = ['A Matlab error occured during the creation of the result structure. ' ...
         'For further details, see the Matlab report below. Contact the developer (see About or Help) to solve the issue.'];
-    throw(MException('Iliski:ResultStructure:MatlabError', [errMsg, getReport(ME)]));
+    ME = addCause(ME, MException('Iliski:ResultStructure:MatlabError', errMsg));%, %getReport(ME)]));
+    throw(ME);
 end
 
 end
