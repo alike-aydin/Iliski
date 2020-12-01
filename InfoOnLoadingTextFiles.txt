@@ -1,7 +1,7 @@
-1) The files should be exclusively composed of numerical values.
+1) The files should be \bf exclusively composed of numerical values. \rm
 
-2) Default format is a two-column text file. The first one should be the time vector, while the second one should be the data vector.
+2) Default format is a \bf two-column text file. \rm The first one should be the time vector, while the second one should be the data vector.
 
 3) If there are more than 2 columns, only the first two will be accounted for and a warning displayed.
 
-4) If there is only one column, it will be used as data. A vector with a timestep of 1 second will be used as time vector. In that case, beware of having a similar sampling time between your From and To data.
+4) If there is only one column, it will be used as data. A vector with a timestep of 1 second will be used as time vector. In that case, \it beware of having a similar sampling time between your From and To data. \rm
