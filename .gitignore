@@ -27,6 +27,8 @@ codegen/
 # Octave session info
 octave-workspace
 
-# H5 file for testing 
+# files for testing 
 *.h5
 data.mat
+Errors.log
+
