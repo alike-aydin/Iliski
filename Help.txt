@@ -1,0 +1,5 @@
+Extensive explanations about Iliski's processes is available in the User Manual. You may find it in your Iliski folder or on the GitLab repository (https://gitlab.com/AliK_A/iliski).
+
+If you bump into any problem or bug, do not hesitate to contact the developer, with the relevant files and screenshots.
+
+Contact: Ali-Kemal Aydin, ali-kemal.aydin@inserm.fr. 
