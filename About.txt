@@ -1,4 +1,4 @@
-Iliski means \it relationsip \rm in Turkish. As it happens, Iliski helps you compute the dynamical relationship between two timeseries, namely a \bf Transfer Function. \rm
+Iliski means relationsip in Turkish. As it happens, Iliski helps you compute the dynamical relationship between two timeseries, namely a Transfer Function.
 
 Iliski has been developed in S. Charpak's team, under the Creative Commons CC BY 4.0 License (see LICENSE.txt or https://creativecommons.org/licenses/by/4.0/).
 
