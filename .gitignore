@@ -31,4 +31,6 @@ octave-workspace
 *.h5
 data.mat
 Errors.log
+*.xls
+*.xlsx
 
