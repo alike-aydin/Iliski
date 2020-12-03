@@ -76,6 +76,7 @@ try
     elseif strcmp(options.Algorithm, 'toeplitz') || strcmp(options.Algorithm, 'fourier')
         f = computeDeconvTF(From(:, 2)', To(:, 2)', options.Algorithm);
         convolution = conv(From(:, 2)', f);
+        convolution = reshape(convolution, [length(convolution), 1]);
         finalSSResid = sum((To(1:end, 2) - convolution(1:size(To, 1))).^2);
         p = NaN;
     else
