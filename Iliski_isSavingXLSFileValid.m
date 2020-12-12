@@ -1,10 +1,10 @@
-function [errMsg] = isSavingFileValid(filePath)
-% ISSAVINGFILEVALID Check the validity of a file to save results in.
+function [errMsg] = Iliski_isSavingXLSFileValid(filePath)
+% ILISKI_ISSAVINGXLSFILEVALID Check the validity of a file to save results in.
 %
-% function [valid] = isSavingFileValid(filePath)
+% function [valid] = Iliski_isSavingXLSFileValid(filePath)
 %
 %   Author: Ali-Kemal Aydin, PhD student
-%   Created: June 17th, 2020
+%   Created: December 3rd, 2020
 %   Mail: ali-kemal.aydin@inserm.fr
 %   Affiliation: 
 %       * INSERM U1128, Laboratory of Neurophysiology and New Microscopy, Université de Paris, Paris, France
@@ -27,8 +27,8 @@ function [errMsg] = isSavingFileValid(filePath)
 errMsg = '';
 
 [path, name, ext] = fileparts(filePath);
-if ~strcmp(ext, '.mat')
-    errMsg = 'Output file must be a .mat file.';
+if ~strcmp(ext, '.xlsx') && ~strcmp(ext, '.xls')
+    errMsg = 'Output file must be an excel file (*.xlsx or *.xls).';
 elseif isempty(name)
     errMsg = 'You have to specify a filename.';
 elseif ~isfolder(path)

@@ -1,5 +1,7 @@
-function [fctNames,fctHandles, defParams] = readFunctionsFile(filename)
-%function [fctNames,fctHandles, defParams] = readFunctionsFile(filename)
+function [fctNames,fctHandles, defParams] = Iliski_readFunctionsFile(filename)
+% ILISKI_READFUNCTIONSFILE Extract the default functions for Iliski
+%
+%function [fctNames,fctHandles, defParams] = Iliski_readFunctionsFile(filename)
 %
 %   Author : Ali-Kemal Aydin, PhD student
 %   Date : May 28th, 2020

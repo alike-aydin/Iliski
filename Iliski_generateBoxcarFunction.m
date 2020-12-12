@@ -1,7 +1,7 @@
-function [timeVector, boxcarVector] = generateBoxcarFunction(dT, bslDuration, stimDuration, totalDuration)
-% GENERATEBOXCARFUNCTION Generate a boxcar timecourse given the parameters. 
+function [timeVector, boxcarVector] = Iliski_generateBoxcarFunction(dT, bslDuration, stimDuration, totalDuration)
+% ILISKI_GENERATEBOXCARFUNCTION Generate a boxcar timecourse given the parameters. 
 %
-% function [timeVector, stepVector] = generateBoxcarFunction(dT, bslDuration,
+% function [timeVector, stepVector] = Iliski_generateBoxcarFunction(dT, bslDuration,
 %   stimDuration, totalDuration)
 %
 %   Author: Ali-Kemal Aydin, PhD student

@@ -1,7 +1,7 @@
-function [f, p, finalSSResid, exitFlag, hessian] = OptTF(From, To, options)
-% OPTTF Optimize a parametric TF given the input/ouput timecourses and the options.
+function [f, p, finalSSResid, exitFlag, hessian] = Iliski_optTF(From, To, options)
+% ILISKI_OPTTF Optimize a parametric TF given the input/ouput timecourses and the options.
 %
-% function [f, p, finalSSResid, exitFlag, hessian] = OptTF(From, To, options)
+% function [f, p, finalSSResid, exitFlag, hessian] = Iliski_optTF(From, To, options)
 %
 %   Author: Ali-Kemal Aydin, PhD student
 %   Mail: ali-kemal.aydin@inserm.fr
@@ -63,7 +63,7 @@ try
     hessian = NaN;
     exitFlag = 1;
     
-    anonFunction = @(param)ssresidEval(param, From, To, options);
+    anonFunction = @(param)Iliski_ssresidEval(param, From, To, options);
     
     if strcmp(options.Algorithm, 'fminsearch')
         [p, finalSSResid, exitFlag] = fminsearch(anonFunction, p, options.optAlgo);
@@ -74,7 +74,7 @@ try
     elseif strcmp(options.Algorithm, 'fmincon')
         [p, finalSSResid, exitFlag, ~, ~, hessian] = fmincon(anonFunction, p, [], [], [], [], options.LowerBoundParameters, options.UpperBoundParameters, [], options.optAlgo);
     elseif strcmp(options.Algorithm, 'toeplitz') || strcmp(options.Algorithm, 'fourier')
-        f = computeDeconvTF(From(:, 2)', To(:, 2)', options.Algorithm);
+        f = Iliski_computeDeconvTF(From(:, 2)', To(:, 2)', options.Algorithm);
         convolution = conv(From(:, 2)', f);
         convolution = reshape(convolution, [length(convolution), 1]);
         finalSSResid = sum((To(1:end, 2) - convolution(1:size(To, 1))).^2);
@@ -85,7 +85,9 @@ try
         throw(err);
     end
     
-    if isa(options.Function, 'function_handle')
+    if ~(strcmp(options.Algorithm, 'toeplitz') ...
+            || strcmp(options.Algorithm, 'fourier')) ...
+            && isa(options.Function, 'function_handle')
         time = [0:options.SamplingTime:options.DurationTF];
         cellParams = num2cell(p);
         f = options.Function(cellParams{:}, time);

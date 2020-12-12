@@ -1,7 +1,7 @@
-function TF = computeDeconvTF(From, To, method)
-% COMPUTEDECONVTF Computes the different deconvolutional TFs.
+function TF = Iliski_computeDeconvTF(From, To, method)
+% ILISKI_COMPUTEDECONVTF Computes the different deconvolutional TFs.
 %
-% function TF = computeDeconvTF(From, To, method)
+% function TF = Iliski_computeDeconvTF(From, To, method)
 %
 %   Author: Ali-Kemal Aydin, PhD student
 %   Mail: ali-kemal.aydin@inserm.fr

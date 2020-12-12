@@ -1,8 +1,8 @@
-function [time] = getTimeFromPath(file, path)
-% GETTIMEFROMPATH Recover the time vector inside the HDF5 file for a given
+function [time] = Iliski_getTimeFromPath(file, path)
+% ILISKI_GETTIMEFROMPATH Recover the time vector inside the HDF5 file for a given
 % timeserie.
 %
-% function [time] = getTimeFromPath(file, path)
+% function [time] = Iliski_getTimeFromPath(file, path)
 %
 %   Author: Ali-Kemal Aydin, PhD student
 %   Mail: ali-kemal.aydin@inserm.fr

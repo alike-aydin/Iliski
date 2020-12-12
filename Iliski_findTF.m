@@ -1,8 +1,8 @@
-function [resultStruct] = findTF(From, To, options)
-% FINDTF Prepare the data and compute a single TF for a set of in/ouput
+function [resultStruct] = Iliski_findTF(From, To, options)
+% ILISKI_FINDTF Prepare the data and compute a single TF for a set of in/ouput
 % signal.
 %
-% function [resultStruct] = findTF(From, To, options)
+% function [resultStruct] = Iliski_findTF(From, To, options)
 %
 %   Author: Ali-Kemal Aydin, PhD student
 %   Mail: ali-kemal.aydin@inserm.fr
@@ -14,8 +14,9 @@ function [resultStruct] = findTF(From, To, options)
 %       for a human-readable version.
 %
 %   DESCRIPTION: Compute a single TF according to the given options after
-%   having treated the data if needed. Calls OPTTF for the TF computation
-%   and is called by BUILDTF to manage multiple TF computations at once.
+%   having treated the data if needed. Calls ILISKI_OPTTF for the TF 
+%   computation and is called by ILISKI_TF to manage multiple TF 
+%   computations at once.
 %__________________________________________________________________________
 %   PARAMETERS:
 %       From ([double, double]): 2D matrix of the input data, with the time
@@ -31,9 +32,9 @@ function [resultStruct] = findTF(From, To, options)
 %__________________________________________________________________________
 %   RETURN:
 %       resultStruct (struct): structure containing all the informations
-%       which allowed to compute the TF and its results. BUILDTF builds
+%       which allowed to compute the TF and its results. ILISKI_TF builds
 %       over this structure to accomodate for multiple TF computations. See
-%       BUILDTF for details about this structure.
+%       ILISKI_TF for details about this structure.
 %__________________________________________________________________________
 %   EXCEPTION:
 %       Iliski:PredictionComputation:MatlabError
@@ -48,9 +49,26 @@ function [resultStruct] = findTF(From, To, options)
 %__________________________________________________________________________
 
 try
-    [FromTreated(:, 1), FromTreated(:, 2)] = cutSignal(From(:, 1), From(:, 2), options.TimeIntervalRawData);
-    [ToTreated(:, 1), ToTreated(:, 2)] = cutSignal(To(:, 1), To(:, 2), options.TimeIntervalRawData);
+    % If From and To are matrices of 2 rows, then turn them to 2 columns
+    if size(From, 2) ~= 2 && size(From, 1) == 2
+        From = reshape(From, size(From, 2), 2);
+    elseif size(From, 2) ~= 2 && size(From, 1) ~= 2% If it is neither 2 rows nor 2 columns
+        errMsg = ['The input data From should be a two-dimensional matrix with 2 columns.'];
+        throw(MException('Iliski:PreTreatment:InvalidFormat'), errMsg);
+    end
     
+    if size(To, 2) ~= 2 && size(To, 1) == 2
+        To = reshape(To, size(To, 2), 2);
+    elseif size(To, 2) ~= 2 && size(To, 1) ~= 2% If it is neither 2 rows nor 2 columns
+        errMsg = ['The input data To should be a two-dimensional matrix with 2 columns.'];
+        throw(MException('Iliski:DataPreTreatment:InvalidInputFormat'), errMsg);
+    end
+    
+    % Cutting the signals to the desired time interval
+    [FromTreated(:, 1), FromTreated(:, 2)] = Iliski_cutSignal(From(:, 1), From(:, 2), options.TimeIntervalRawData);
+    [ToTreated(:, 1), ToTreated(:, 2)] = Iliski_cutSignal(To(:, 1), To(:, 2), options.TimeIntervalRawData);
+    
+    % Treating the From signal only if it is not a step
     if ~options.IsFromStep
         timeVector = options.TimeIntervalRawData(1):options.SamplingTime:options.TimeIntervalRawData(2);
         
@@ -94,7 +112,7 @@ end
 
 %% RSS1 optimization
 try
-    [tf, param, finalSSResid, exitFlag, hessian] = OptTF(FromTreated, ToTreated, options);
+    [tf, param, finalSSResid, exitFlag, hessian] = Iliski_optTF(FromTreated, ToTreated, options);
     
     pred = conv(FromTreated(:, 2), tf);
     pred = pred(1:size(FromTreated, 1));

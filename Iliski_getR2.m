@@ -1,13 +1,7 @@
-%% getR2.m
-% Return the R² value for the given parameters
-% 
-% Y : 1D scalar vector, real data
-% Yfit : 1D scalar vector, fitted data
-
-function rsq = getR2(Y, Yfit)
-% GETR2 Calculate the R² between two timeseries.
+function rsq = Iliski_getR2(Y, Yfit)
+% ILISKI_GETR2 Calculate the R² between two timeseries.
 %
-% function rsq = getR2(Y, Yfit)
+% function rsq = Iliski_getR2(Y, Yfit)
 %
 %   Author: Ali-Kemal Aydin, PhD student
 %   Mail: ali-kemal.aydin@inserm.fr

@@ -1,5 +1,7 @@
-function [paramNames] = extractParametersFromHandle(fctHandle)
-%function [paramNames] = extractParametersFromHandle(fctHandle)
+function [paramNames] = Iliski_extractParametersFromHandle(fctHandle)
+% ILISKI_EXTRACTPARAMETERSFROMHANDLE Treat a function handle to optimize
+%
+%function [paramNames] = Iliski_extractParametersFromHandle(fctHandle)
 %
 %   Author : Ali-Kemal Aydin, PhD student
 %   Date : May 28th, 2020

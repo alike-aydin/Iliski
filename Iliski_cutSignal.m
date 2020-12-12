@@ -1,7 +1,7 @@
-function [time, sign] = cutSignal(time, sign, range)
-% CUTSIGNAL Reduces the duration of a signal to a given time interval. 
+function [time, sign] = Iliski_cutSignal(time, sign, range)
+% ILISKI_CUTSIGNAL Reduces the duration of a signal to a given time interval. 
 %
-% function [time, sign] = cutSignal(time, sign, range)
+% function [time, sign] = Iliski_cutSignal(time, sign, range)
 %
 %   Author: Ali-Kemal Aydin, PhD student
 %   Mail: ali-kemal.aydin@inserm.fr

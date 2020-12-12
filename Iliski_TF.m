@@ -1,7 +1,7 @@
-function results = buildTF(From, To, options)
-% BUILDTF Framework function to compute a TF.
+function results = Iliski_TF(From, To, options)
+% ILISKI_TF Framework function to compute a TF.
 %
-% function results = buildTF(From, To, options)
+% function results = Iliski_TF(From, To, options)
 %
 %   Author: Ali-Kemal Aydin, PhD student
 %   Mail: ali-kemal.aydin@inserm.fr
@@ -32,15 +32,15 @@ function results = buildTF(From, To, options)
 %           * MedianFilterFrom (int): 0 to not apply a median filter, the
 %           number of points to use for the median filter otherwise (see 
 %           MEDFILT1) to the From signal.
-%           * SGolayFilterFrom (int): 0 to not apply a savitzky-golay filter,
-%           the impair number of points to use as a window otherwise (see 
-%           SGOLAYFILTER) to the From signal.
+%           * SGolayFilterFrom (int): 0 to not apply a 3rd order 
+%           savitzky-golay filter, the impair number of points to use as a 
+%           window otherwise (see SGOLAYFILTER) to the From signal.
 %           * MedianFilterTo (int): 0 to not apply a median filter, the
 %           number of points to use for the median filter otherwise (see 
 %           MEDFILT1) to the To signal.
-%           * SGolayFilterTo (int): 0 to not apply a savitzky-golay filter,
-%           the impair number of points to use as a window otherwise (see 
-%           SGOLAYFILTER) to the To signal.
+%           * SGolayFilterTo (int): 0 to not apply a 3rd order 
+%           savitzky-golay filter, the impair number of points to use as a 
+%           window otherwise (see SGOLAYFILTER) to the To signal.
 %           * InterpolationMethod (str): If the From signal is
 %           interpolated, the method to be used will be this one (see
 %           INTERP1 for all the possiblities of the method parameter).
@@ -56,9 +56,21 @@ function results = buildTF(From, To, options)
 %__________________________________________________________________________
 %   RETURN:
 %       resultStruct (struct): structure containing all the informations
-%       which allowed to compute the TF and its results. BUILDTF builds
-%       over this structure to accomodate for multiple TF computations. See
-%       BUILDTF for details about this structure.
+%       which allowed to compute the TF and its results. Separated in 3
+%       substructures:
+%           * Header: contains all the fields from the options structure
+%           and the eventual InitialTF matrix, in case the computed TF was
+%           computed from a set of pre-defined parameters, i.e. with an
+%           optimization algorithm
+%           * InputData: contains the From and To data in their raw form.
+%           * Computed: contains the treated input data, every computed TFs
+%           (both their timeseries and their parameters if they were
+%           optimized), the resulting informations (RSS, Pearsons, etc.)
+%           from the optimization algorithms and some metadata (date and 
+%           such). For the TFs and corresponding informations, the last
+%           dimension of the matrices corresponds to the computation
+%           iteration (e.g. first TF is at Computed.TF(:, :, 1)).
+%           
 %__________________________________________________________________________
 %   EXCEPTION:
 %       Iliski:PredictionComputation:MatlabError
@@ -66,7 +78,7 @@ function results = buildTF(From, To, options)
 %
 %      Iliski:PredictionComputation:MatlabError
 %           If a Matlab Error occured during the computation of the TF
-%           (OPTTF function).
+%           (ILISKI_OPTTF function).
 %
 %      Iliski:ResultStructure:MatlabError
 %           If a Matlab Error occured the creation of the Result Structure.        
@@ -110,20 +122,22 @@ try
             options.Algorithm = 'simulannealbnd';
             options.optAlgo = optionsAnneal;
             
-            resultStruct = findTF(From, To, options);
+            resultStruct = Iliski_findTF(From, To, options);
             
             options.InitialParameters = resultStruct.Computed.Parameters';
             options.InitialParameters_FirstStep = resultStruct.Computed.Parameters;
             
             options.Algorithm = 'fminunc';
             options.optAlgo = optionsNunc;
-            resultStruct = findTF(From, To, options);
+            resultStruct = Iliski_findTF(From, To, options);
             
             % has the second algorithm changed anything?
             optParamDiff = resultStruct.Computed.Parameters - options.InitialParameters_FirstStep;
             % disp(['Param Diff: ', num2str(optParamDiff)])
         else
-            if strcmp(options.Algorithm, 'simulannealbnd')
+            if isfield(options, 'optAlgo')
+                ; % Do not redefine the optimizations parameters if there are already defined
+            elseif strcmp(options.Algorithm, 'simulannealbnd')
                 options.optAlgo = optionsAnneal;
             elseif strcmp(options.Algorithm, 'fmincon')
                 options.optAlgo = optionsCon;
@@ -133,7 +147,7 @@ try
                 options.optAlgo = optionsMinSearch;
             end
             
-            resultStruct = findTF(From, To, options);
+            resultStruct = Iliski_findTF(From, To, options);
         end
         
         if options.Iterations > 1 && i == 1
@@ -141,7 +155,7 @@ try
             results.Computed.Parameters = [];
             results.Computed.Parameters(:, i) = resultStruct.Computed.Parameters';
             results.Computed.Hessian = [];
-            results.Computed.Hessian(:, i) = resultStruct.Computed.Hessian;
+            results.Computed.Hessian(:, :, i) = resultStruct.Computed.Hessian;
         elseif options.Iterations > 1
             results.Computed.TF(:, :, i) = resultStruct.Computed.TF;
             results.Computed.Prediction(:, :, i) = resultStruct.Computed.Prediction;
@@ -154,6 +168,9 @@ try
             results = resultStruct;
         end
     end
+    
+    % Sorting the results by their sum of the square residual values, the first being the best one.
+    results = Iliski_sortTFComputations(results, 'ascend');
 catch ME
     if strfind(ME.identifier, 'Iliski')
         rethrow(ME);

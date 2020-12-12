@@ -1,5 +1,5 @@
-function [sortedResults] = sortTFComputations(results, direction)
-%function [sortedResults] = sortTFComputations(results)
+function [sortedResults] = Iliski_sortTFComputations(results, direction)
+%function [sortedResults] = Iliski_sortTFComputations(results)
 %
 %   Author : Ali-Kemal Aydin, PhD student
 %   Date : June 1st, 2020
@@ -33,7 +33,7 @@ if results.Header.Iterations > 1
     sortedResults.Computed.TF = results.Computed.TF(:, :, sortedIdx);
     sortedResults.Computed.Prediction = results.Computed.Prediction(:, :, sortedIdx);
     sortedResults.Computed.Parameters = results.Computed.Parameters(:, sortedIdx);
-    sortedResults.Computed.Hessian = results.Computed.Hessian(:, sortedIdx);
+    sortedResults.Computed.Hessian = results.Computed.Hessian(:, :, sortedIdx);
     sortedResults.Computed.ExitFlag = results.Computed.ExitFlag(sortedIdx);
     sortedResults.Computed.Pearson = results.Computed.Pearson(sortedIdx);
     sortedResults.Computed.ResidualSumSquare = results.Computed.ResidualSumSquare(sortedIdx);

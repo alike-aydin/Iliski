@@ -1,6 +1,5 @@
-function saveResultsAsXLS(outputStruct, filename)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+function Iliski_saveResultsAsXLS(outputStruct, filename)
+
 
 header = outputStruct.Header;
 input = outputStruct.InputData;
@@ -39,8 +38,8 @@ if isa(header.Function, 'function_handle')
     xlswrite(filename, {'Upper bounds'}, 'Header', 'D18');
     for i=1:length(header.InitialParameters)
         xlswrite(filename, header.InitialParameters(i), 'Header', [char(68+i) '16']);
-    xlswrite(filename, header.LowerBoundParameters(i), 'Header', [char(68+i) '17']);
-    xlswrite(filename, header.UpperBoundParameters(i), 'Header', [char(68+i) '18']);
+        xlswrite(filename, header.LowerBoundParameters(i), 'Header', [char(68+i) '17']);
+        xlswrite(filename, header.UpperBoundParameters(i), 'Header', [char(68+i) '18']);
     end
 else
     xlswrite(filename, {'Function' header.Function}, 'Header', 'D14');
@@ -54,12 +53,13 @@ xlswrite(filename, input.From, 'Input', 'A2');
 xlswrite(filename, input.To, 'Input', 'D2');
 
 % 7th and 8th columns are for the paths
-xlswrite(filename, {'Path - From' input.fileFrom}, 'Input', 'G1');
-xlswrite(filename, {'Path - To' input.fileTo}, 'Input', 'G2');
-
-if exist(input.pathFrom) % if HDF5
+if isfield(input, 'fileFrom')
+    xlswrite(filename, {'Path - From' input.fileFrom}, 'Input', 'G1');
+    xlswrite(filename, {'Path - To' input.fileTo}, 'Input', 'G2');
+end
+if isfield(input, 'pathFrom') % if HDF5
     xlswrite(filename, {'HDF5 Path - From' input.pathFrom}, 'Input', 'G3');
-xlswrite(filename, {'HDF5 Path - To' input.pathTo}, 'Input', 'G4');
+    xlswrite(filename, {'HDF5 Path - To' input.pathTo}, 'Input', 'G4');
 end
 
 %% Computed data
@@ -78,7 +78,7 @@ xlswrite(filename, computed.Prediction(:, :, 1), 'Computed', 'J2');
 xlswrite(filename, {'RSS' computed.ResidualSumSquare(1)}, 'Computed', 'M1');
 xlswrite(filename, {'Pearson' computed.Pearson(1)}, 'Computed', 'M2');
 
-if isa(header.Function, 'function_handle') 
+if isa(header.Function, 'function_handle')
     xlswrite(filename, {'Only the TF showing the best RSS is written in this file. Find all the computed parameters in the next tab.'}, 'Computed', 'P1')
 end
 
@@ -86,7 +86,7 @@ end
 if isa(header.Function, 'function_handle')
     xlswrite(filename, {'Rank' 'RSS' 'Pearson' 'Parameters'}, 'Computed Parameters', 'A1');
     xlswrite(filename, [[1:length(computed.Pearson)]' computed.ResidualSumSquare' ...
-         computed.Pearson' computed.Parameters'], 'Computed Parameters', 'A2');
+        computed.Pearson' computed.Parameters'], 'Computed Parameters', 'A2');
 end
 end
 
