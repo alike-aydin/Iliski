@@ -28,8 +28,6 @@ codegen/
 octave-workspace
 
 # files for testing 
-*.h5
-data.mat
 Errors.log
 *.xls
 *.xlsx

@@ -58,7 +58,7 @@ hold off;
 % of a single-gamma function.
 
 % Running the algorithm 5 times in a row with the same initial parameters
-options.Iterations= 1;
+options.Iterations= 5;
 % A median filter over 5 points will be applied to the To signal before
 % computing
 options.MedianFilterTo = 5;
@@ -183,7 +183,7 @@ assignin('base', n, resultsTF);
 
 f = waitbar(0, 'Progress stays at 0, it is normal, wait while saving occurs.', 'Name', 'Saving your TF(s)...');
 try
-    Iliski_saveResultsAsXLS(resultsTF, [n '.xlsx']);
+    %Iliski_saveResultsAsXLS(resultsTF, [n '.xlsx']);
     close(f);
 catch ME
     close(f);
