@@ -40,7 +40,7 @@ The software is packaged to be used without having Matlab installed on your comp
 Don't forget to install a HDF5 Viewer from [here](https://www.hdfgroup.org/downloads/hdfview).
 
 ## Documentation & Demo
-The *User Manual* is in a separate file : Iliski_UserManual.pdf (UPDATE LINK). 
+The *User Manual* is in a separate file, at the root of the repository: [Iliski_UserManual.pdf](https://gitlab.com/AliK_A/iliski/-/raw/master/Iliski_User_Manual.pdf?inline=false). 
 
 
 
