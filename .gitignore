@@ -32,5 +32,6 @@ Errors.log
 *.xls
 *.xlsx
 *.prj
-Iliski/ # Folder for distribution
+# Folder for distribution
+Iliski/
 
