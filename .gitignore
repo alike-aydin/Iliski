@@ -31,4 +31,6 @@ octave-workspace
 Errors.log
 *.xls
 *.xlsx
+*.prj
+Iliski/ # Folder for distribution
 
