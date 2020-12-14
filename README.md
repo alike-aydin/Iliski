@@ -31,10 +31,9 @@ The software is packaged to be used without having Matlab installed on your comp
 
 + Download here the HDF5 data files (too heavy to be be on GitLab) : [http://doi.org/10.5281/zenodo.3773863](http://doi.org/10.5281/zenodo.3773863) and after having installed Iliski, put them in the `ExampleData/` folder (where there are already some example files).
 + Go to the [GitLab repository](https://gitlab.com/AliK_A/iliski/) 
-+ Download :
-  + the repository [here](https://gitlab.com/AliK_A/iliski/-/archive/master/iliski-master.zip), if you **have the Matlab Runtime environnement** on your computer, and unzip it. 
-    + Open `Iliski.mlapp` and have fun!
-  + `Iliski_WebInstaller.exe`, if you **do not have the Matlab Runtime environnement** and run the file to install.
++ Download the repository [here](https://gitlab.com/AliK_A/iliski/-/archive/master/iliski-master.zip) and unzip it. 
+    + if you **have the Matlab Runtime environnement** on your computer, open `Iliski.mlapp` and have fun!
+  + if you **do not have the Matlab Runtime environnement** and run `Iliski_WebInstaller.exe` to install.
     + Run the file `Iliski.exe`and have fun!
 
 Don't forget to install a HDF5 Viewer from [here](https://www.hdfgroup.org/downloads/hdfview).
