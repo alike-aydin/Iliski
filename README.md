@@ -8,7 +8,7 @@
 - [Documentation & Demo](#documentation-demo)
 
 ## Overview
-`Iliski` aims to compute TFs, as described in the pre-print available on BioRxiv (UPDATE LINK). 
+`Iliski` aims to compute TFs, as described in the pre-print available on [BioRxiv](https://doi.org/10.1101/2020.12.21.423764). 
 
 
 ## System Requirements
@@ -29,9 +29,9 @@ You may need a HDF5 file Viewer, downloadable on the HDF Group website [here](ht
 ## Installation Guide
 The software is packaged to be used without having Matlab installed on your computer. 
 
-+ Download here the HDF5 data files (too heavy to be be on GitLab) : [http://doi.org/10.5281/zenodo.3773863](http://doi.org/10.5281/zenodo.3773863) and after having installed Iliski, put them in the `ExampleData/` folder (where there are already some example files).
-+ Go to the [GitLab repository](https://gitlab.com/AliK_A/iliski/) 
-+ Download the repository [here](https://gitlab.com/AliK_A/iliski/-/archive/master/iliski-master.zip) and unzip it. 
++ Download here the HDF5 data files (too heavy to be be on GitHub) : [http://doi.org/10.5281/zenodo.3773863](http://doi.org/10.5281/zenodo.3773863) and after having installed Iliski, put them in the `ExampleData/` folder (where there are already some example files).
++ Go to the [GitHub repository](https://github.com/alike-aydin/Iliski/) 
++ Download the repository [here](https://github.com/alike-aydin/Iliski/archive/refs/heads/master.zip) and unzip it. 
     + if you **have the Matlab Runtime environnement** on your computer, open `Iliski.mlapp` and have fun!
   + if you **do not have the Matlab Runtime environnement** and run `Iliski_WebInstaller.exe` to install.
     + Run the file `Iliski.exe`and have fun!
@@ -39,7 +39,7 @@ The software is packaged to be used without having Matlab installed on your comp
 Don't forget to install a HDF5 Viewer from [here](https://www.hdfgroup.org/downloads/hdfview).
 
 ## Documentation & Demo
-The *User Manual* is in a separate file, at the root of the repository: [Iliski_UserManual.pdf](https://gitlab.com/AliK_A/iliski/-/raw/master/Iliski_User_Manual.pdf?inline=false). 
+The *User Manual* is in a separate file, at the root of the repository: [Iliski_UserManual.pdf](https://raw.githubusercontent.com/alike-aydin/Iliski/master/Iliski_User_Manual.pdf). 
 
 
 
