@@ -51,8 +51,8 @@ if mod(totalDuration, dT) || mod(bslDuration, dT) || ...
 else
     boxcarVector = zeros(1, ceil(totalDuration/dT)+1);
     timeVector = 0:dT:dT*length(boxcarVector)-dT;
-    boxcarVector(round(bslDuration/dT)+1:round((bslDuration/dT)+round(stimDuration)/dT)) = ...
-        ones(1, round(stimDuration/dT));
+    boxcarVector(round(bslDuration/dT)+1:round(bslDuration/dT)+round(stimDuration/dT)+1) = ...
+        ones(1, round(stimDuration/dT)+1);
 end
 
 end
