@@ -49,10 +49,10 @@ if mod(totalDuration, dT) || mod(bslDuration, dT) || ...
         msgError);
     throw(err);
 else
-    boxcarVector = zeros(1, ceil(totalDuration/dT));
-    timeVector = dT:dT:dT*length(boxcarVector);
-    boxcarVector(ceil(bslDuration/dT):ceil((bslDuration+stimDuration)/dT)-1) = ...
-        ones(1, ceil(stimDuration/dT));
+    boxcarVector = zeros(1, ceil(totalDuration/dT)+1);
+    timeVector = 0:dT:dT*length(boxcarVector)-dT;
+    boxcarVector(round(bslDuration/dT)+1:round((bslDuration/dT)+round(stimDuration)/dT)) = ...
+        ones(1, round(stimDuration/dT));
 end
 
 end
