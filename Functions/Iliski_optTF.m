@@ -79,6 +79,11 @@ try
         convolution = reshape(convolution, [length(convolution), 1]);
         finalSSResid = sum((To(1:end, 2) - convolution(1:size(To, 1))).^2);
         p = NaN;
+        
+        if isnan(finalSSResid)
+            finalSSResid = 0;
+        end
+        
     else
         errMsg = 'The computation algorithm is unknown. Contact the developer (see Help or About) to solve the issue.';
         err = MException('Iliski:TFOptimization:UnknownAlgorithm', errMsg);
