@@ -95,7 +95,7 @@ optionsMinSearch = optimset('Display','off',...     % change iter-> off to displ
 
 optionsAnneal = saoptimset('Display','off',...     % change iter-> off to display no output
     'MaxFunEval', 10000,...  % max number of function evaluations allowed
-    'MaxIter', Inf,...      % max number of iteration allowed
+    'MaxIter', 10000,...      % max number of iteration allowed
     'TolFun',1e-8, ... % termination tolerance on the function value
     'ObjectiveLimit', 0);
 
