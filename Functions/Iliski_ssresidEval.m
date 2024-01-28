@@ -45,7 +45,7 @@ cellParams = num2cell(param);
 f = options.Function(cellParams{:}, time);
 
 convolution = conv(From(:, 2), f); 
-convolution = interp1(From(:, 1), convolution(1:length(From(:, 2))), To(:, 1), options.InterpolationMethod);
+convolution = interp1(From(:, 1), convolution(1:length(From(:, 2))), To(:, 1), options.InterpolationMethod, 'extrap');
 SSPredic = sum((To(1:end-1, 2) - convolution(1:end-1)).^2);
 
 SSResid = SSPredic;
